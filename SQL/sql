@@ -1,0 +1,8 @@
+CREATE DATABASE attendanceRecord;
+USE attendanceRecord;
+CREATE TABLE user (id SERIAL PRIMARY KEY UNIQUE Not Null, login_id varchar(255) UNIQUE Not Null, name varchar(255) Not Null, position varchar(20) Not Null, birth_date DATE Not Null, password varchar(255) Not Null, create_date DATETIME Not Null, update_date DATETIME Not Null);
+INSERT INTO user (login_id, name, position, birth_date, password, create_date, update_date) VALUES ('admin', '管理者', '', '1993-04-03', '2918D885D9A6CAABA26796E3AD827A08', '2017-09-02 23:48:27', '2017-09-02 23:48:27');
+CREATE TABLE work_situation (id SERIAL PRIMARY KEY UNIQUE Not Null, login_id varchar(255) Not Null, create_date DATE Not Null, work_situ varchar(20) Not Null, work_start TIME Not Null, work_end TIME Not Null, break_time TIME Not Null, work_time TIME Not Null, overtime TIME Not Null );
+CREATE TABLE work_situation_edit (id SERIAL PRIMARY KEY UNIQUE Not Null, login_id varchar(255) Not Null, edit_time DATETIME Not Null, edit_content varchar(255));
+CREATE TABLE time_master (id SERIAL PRIMARY KEY UNIQUE Not Null, work_start TIME Not Null, work_end TIME Not Null, break_time TIME Not Null, work_time TIME Not Null );
+INSERT INTO time_master (work_start , work_end , break_time , work_time) VALUES ('10:00:00', '19:00:00', '01:00:00', '08:00:00');
