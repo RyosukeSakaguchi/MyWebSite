@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="java.util.List"%>
+<%@ page import="beans.PositionBeans"%>
+<%@ page import="dao.DaoUtil"%>
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -277,7 +280,7 @@
 									<div class="form-group">
 										<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">ログインID</label>
 										<div class="col-sm-3">
-											<input type="text" value="${loginId}" class="form-control" name="loginId" style="background: white; height: 35px; width: 200px;">
+											<input type="text" value="${loginId}" pattern="^[0-9A-Za-z]+$" title="使用できるのは半角英数字のみ" class="form-control" name="loginId" style="background: white; height: 35px; width: 200px;">
 										</div>
 									</div><br><br>
 									<div class="form-group">
@@ -289,26 +292,28 @@
 									<div class="form-group">
 										<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">パスワード</label>
 										<div class="col-sm-3">
-											<input type="password" class="form-control" name="password" style="background: white; height: 35px; width: 200px;">
+											<input type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="8文字以上で1文字以上の数字、小文字アルファベット、大文字アルファベットがそれぞれ含まれていること" class="form-control" name="password" style="background: white; height: 35px; width: 200px;">
 										</div>
 									</div><br><br>
 									<div class="form-group">
 										<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">パスワード(確認)</label>
 										<div class="col-sm-3">
-											<input type="password" class="form-control" name="passwordConf" style="background: white; height: 35px; width: 200px;">
+											<input type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="8文字以上で1文字以上の数字、小文字アルファベット、大文字アルファベットがそれぞれ含まれていること" class="form-control" name="passwordConf" style="background: white; height: 35px; width: 200px;">
 										</div>
 									</div><br><br>
 									<div class="form-group">
 										<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">役職</label>
 										<div class="col-sm-3">
 											<select class="form-control" name="position" style="background: white; height: 35px; width: 200px;">
-												<% String position = (String)request.getAttribute("position");%>
+												<%
+													List<PositionBeans> positonList = DaoUtil.findAllPosition();
+													request.setAttribute("positonList",positonList);
+												%>
 												<c:choose>
 													<c:when test="${position == null}">
-														<option value="なし" selected >なし</option>
-														<option value="営業" >営業</option>
-														<option value="事務" >事務</option>
-														<option value="プログラマー" >プログラマー</option>
+														<c:forEach var="obj" items="${positonList}">
+															<option value="${obj.position}" >${obj.position}</option>
+														</c:forEach>
 													</c:when>
 													<c:otherwise>
 														<option value="なし"  <%if(request.getAttribute("position").equals("なし")){%> selected <% } %>>なし</option>

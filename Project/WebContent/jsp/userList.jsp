@@ -10,6 +10,7 @@
 <!--[if gt IE 8]><!-->
 <html class="no-js">
 <!--<![endif]-->
+
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -259,8 +260,8 @@
 </head>
 <body>
 	<div class="fh5co-loader"></div>
-
 	<div id="fh5co-page">
+
 		<section id="fh5co-header">
 			<div class="container">
 				<nav role="navigation">
@@ -404,6 +405,13 @@
 							</table>
 						</div>
 					</div>
+				</form>
+				<form action="OutputCSV" method="post"><br><br>
+				<div class="col-sm-3" style="width: 220px">
+					<input type="month" class="form-control" name="yearAndMonth" style="background: white; height: 35px; width: 200px;">
+				</div>
+				の全ユーザーの月給をcsvファイルに
+				<button class="btn btn-warning" type="submit">出力</button>
 				</form>
 			</div>
 		</section>

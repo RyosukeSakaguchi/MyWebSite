@@ -5,11 +5,13 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.DatatypeConverter;
 
 import beans.WorkSituationBeans;
+import dao.WorkSituationDao;
 
 public class UtillLogic {
 
@@ -161,7 +163,39 @@ public class UtillLogic {
 		return timeNameJa;
 	}
 
+	public static int getMonthlySalary(String loginId, int year, int month){
+		List<WorkSituationBeans> workSituationList = new ArrayList<WorkSituationBeans>();
+		workSituationList = WorkSituationDao.findAll(loginId, year, month);
+		String totalWorkTime = totalWorkTime(workSituationList);
+		String totalOvertime = totalOvertime(workSituationList);
+		int totalWorkTimeInt = stringTimeToInt(totalWorkTime);
+		int totalOvertimeInt = stringTimeToInt(totalOvertime);
+		int diffTotalTimeInt = timeSubtraction(totalWorkTimeInt, totalOvertimeInt);
+		int salary = (int)(calSalary(diffTotalTimeInt) + calSalary(totalOvertimeInt) * 2);
 
+
+		return salary;
+	}
+
+	public static double calSalary(int timeInt){
+		int underTwo = timeInt % 100;
+		int middle = (timeInt - underTwo) % 10000;
+		int middleTwo = middle / 100;
+		int topTwo = (timeInt - middle - underTwo) / 10000;
+		return 1000.0 * ( topTwo + middleTwo / 60.0 + underTwo / 3600.0);
+	}
+
+	public static int yearAndMonthToYear(String yearAndMonth) {
+		int yearAndMonthInt = Integer.parseInt(yearAndMonth.replaceAll("-", ""));
+		int year = (yearAndMonthInt - yearAndMonthToMonth(yearAndMonth)) / 100;
+		return  year;
+	}
+
+	public static int yearAndMonthToMonth(String yearAndMonth) {
+		int yearAndMonthInt = Integer.parseInt(yearAndMonth.replaceAll("-", ""));
+		int month = yearAndMonthInt % 100;
+		return month;
+	}
 
 
 

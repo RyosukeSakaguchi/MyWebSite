@@ -295,12 +295,12 @@
 									<br><br>
 									<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">パスワード</label>
 									<div class="col-sm-3">
-										<input type="password" class="form-control" id="inputName" name="password" onblur="isEmpty(this)" style="background: white; height: 35px; width: 200px;">
+										<input type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="8文字以上で1文字以上の数字、小文字アルファベット、大文字アルファベットがそれぞれ含まれていること" class="form-control" id="inputName" name="password" onblur="isEmpty(this)" style="background: white; height: 35px; width: 200px;">
 									</div>
 									<br><br>
 									<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">パスワード(確認)</label>
 									<div class="col-sm-3">
-										<input type="password" class="form-control" id="inputName" name="passwordConf" onblur="isEmpty(this)" style="background: white; height: 35px; width: 200px;">
+										<input type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="8文字以上で1文字以上の数字、小文字アルファベット、大文字アルファベットがそれぞれ含まれていること" class="form-control" id="inputName" name="passwordConf" onblur="isEmpty(this)" style="background: white; height: 35px; width: 200px;">
 									</div>
 									<br><br>
 									<label for="inputName" class="col-sm-2 control-label" style="width: 200px;"> 役職</label>

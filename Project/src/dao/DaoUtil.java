@@ -1,13 +1,16 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import beans.PositionBeans;
 import beans.SearchConditionBeans;
 import common.UtillLogic;
 
@@ -132,5 +135,45 @@ public class DaoUtil {
 
 	}
 
+	public static List<PositionBeans> findAllPosition() {
+		Connection conn = null;
+		List<PositionBeans> positionList = new ArrayList<PositionBeans>();
+
+		try {
+			// データベースへ接続
+			conn = DBManager.getConnection();
+
+			// SELECT文を準備
+			String sql = "select * from position_master";
+			PreparedStatement pStmt = conn.prepareStatement(sql);
+
+			// SELECTを実行し、結果表を取得
+			ResultSet rs = pStmt.executeQuery();
+
+			// 結果表に格納されたレコードの内容を
+			// UserInfoインスタンスに設定し、Listインスタンスに追加
+			while (rs.next()) {
+				PositionBeans position = new PositionBeans();
+				position.setId(rs.getInt("id"));
+				position.setPosition(rs.getString("position"));
+				positionList.add(position);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			// データベース切断
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+		}
+		return positionList;
+
+	}
 
 }

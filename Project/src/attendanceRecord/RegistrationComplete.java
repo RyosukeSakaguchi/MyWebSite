@@ -24,7 +24,6 @@ public class RegistrationComplete extends HttpServlet {
      */
     public RegistrationComplete() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
@@ -55,7 +54,6 @@ public class RegistrationComplete extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

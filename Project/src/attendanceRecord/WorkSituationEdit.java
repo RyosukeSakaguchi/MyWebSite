@@ -30,7 +30,6 @@ public class WorkSituationEdit extends HttpServlet {
 	 */
 	public WorkSituationEdit() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

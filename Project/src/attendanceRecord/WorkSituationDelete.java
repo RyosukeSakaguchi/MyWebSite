@@ -30,7 +30,6 @@ public class WorkSituationDelete extends HttpServlet {
 	 */
 	public WorkSituationDelete() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
