@@ -1,8 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="java.util.Date"%>
+<%@ page import="java.text.SimpleDateFormat"%>
 <%@ page import="beans.UserBeans"%>
+<%@ page import="beans.PositionBeans"%>
+<%@ page import="dao.DaoUtil"%>
 <%@ page import="dao.WorkSituationDao"%>
 <%@ page import="java.util.List "%>
+<%@ page import="common.UtillLogic"%>
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -301,22 +306,40 @@
 									<div class="form-group">
 										<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">役職</label>
 										<div class="col-sm-3">
-											<select class="form-control" name="position" onblur="isEmpty(this)"style="background: white; height: 35px; width: 200px;">
-												<%String position = (String)request.getAttribute("position");%>
+											<select class="form-control" name="position" style="background: white; height: 35px; width: 200px;">
+												<%
+													String position = (String)request.getAttribute("position");
+													List<PositionBeans> positonList = DaoUtil.findAllPosition();
+													request.setAttribute("positonList",positonList);
+												%>
 												<c:choose>
 													<c:when test="${position == null}">
-														<option value="" selected></option>
-														<option value="なし" >なし</option>
-														<option value="営業">営業</option>
-														<option value="事務" >事務</option>
-														<option value="プログラマー">プログラマー</option>
+														<option value="" ></option>
+														<c:forEach var="obj" items="${positonList}">
+															<option value="${obj.position}" >${obj.position}</option>
+														</c:forEach>
 													</c:when>
 													<c:otherwise>
-														<option value=""  <%if(request.getAttribute("position").equals("")){%> selected <% } %>></option>
-														<option value="なし"  <%if(request.getAttribute("position").equals("なし")){%> selected <% } %>>なし</option>
-														<option value="営業" <% if(request.getAttribute("position").equals("営業")){%> selected <% } %>>営業</option>
-														<option value="事務" <% if(request.getAttribute("position").equals("事務")){%> selected <% } %>>事務</option>
-														<option value="プログラマー" <% if(request.getAttribute("position").equals("プログラマー")){%> selected <% } %>>プログラマー</option>
+														<option value="" ></option>
+														<%
+														 for(PositionBeans p : positonList){
+															 if(p.getPosition().equals(position)){
+														%>
+
+														<option value="<%=p.getPosition()%>" selected ><%=p.getPosition()%></option>
+
+														<%
+															 }else{
+
+														%>
+
+														<option value="<%=p.getPosition()%>"><%=p.getPosition()%></option>
+
+														<%
+															 }
+														 }
+
+														%>
 													</c:otherwise>
 												</c:choose>
 											</select>
@@ -331,7 +354,18 @@
 										<div class="col-sm-3">
 											<input type="date" class="form-control"  name="birth_date_to" value="${birth_date_to}" onblur="isEmpty(this)" style="background: white; height: 35px; width: 200px;">
 										</div>
-									</div><br> <br> <br>
+									</div><br><br>
+									<div class="form-group">
+										<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">勤務状況</label>
+										<div class="col-sm-3">
+											<select class="form-control" name="workSituation" style="background: white; height: 35px; width: 200px;">
+												<option value="" ></option>
+												<option value="勤務中" >勤務中</option>
+												<option value="帰宅" >帰宅</option>
+											</select>
+										</div>
+									</div>
+									<br> <br> <br>
 									<div class="form-group">
 										<div class="button_wrapper">
 											<button class="btn btn-info" type="submit" >検索</button>
@@ -352,7 +386,7 @@
 						<input type="button" class="btn btn-primary" value="全て選択" onClick="BoxChecked(true);">
 						<input type="button" class="btn btn-warning" value="全て未選択" onClick="BoxChecked(false);" >
 						　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　
-						<button class="btn btn-danger" type="submit">選択したユーザーを削除</button>
+						<button class="btn btn-danger" type="submit">選択したユーザーを削除</button><br><br>
 					<div class="row">
 						<div class="table-responsive">
 							<table class="table table-striped">
@@ -371,9 +405,17 @@
 									<%
 										List<UserBeans> u = (List<UserBeans>) request.getAttribute("userList");
 										UserBeans loginUser= (UserBeans)session.getAttribute("loginUser");
+										Date now = new Date();
+										SimpleDateFormat y = new SimpleDateFormat("yyyy");
+										SimpleDateFormat m = new SimpleDateFormat("MM");
+										int year = Integer.parseInt(y.format(now));
+										int month = Integer.parseInt(m.format(now));
+
 										for (int i = 0; i < u.size(); i++) {
 											if(u.get(i).getId() != 1){
-												boolean result = WorkSituationDao.isGetTodayDate(u.get(i).getLoginId());
+												boolean result = WorkSituationDao.isWorking(u.get(i).getLoginId());
+												String titalOvertime = UtillLogic.totalOvertime(WorkSituationDao.findAll(u.get(i).getLoginId(), year, month));
+												int titalOvertimeInt = UtillLogic.stringTimeToInt(titalOvertime);
 									%>
 									<tr>
 										<td></td>
@@ -384,14 +426,20 @@
 										<%
 											if(!result){
 										%>
-											<td>帰宅</td>
+											<td>帰宅
 										<%
 											}else{
 										%>
-										<td>勤務中</td>
+										<td>勤務中
+										<%
+											}
+											if(titalOvertimeInt >= 500000) {
+										%>
+										<font size="3" color="red">　残業時間超過</font>
 										<%
 											}
 										%>
+										</td>
 										<td>
 											<a class="btn btn-primary" href="UserDetail?id=<%=u.get(i).getId()%>">詳細</a>
 											<a class="btn btn-success" href="UserUpdate?id=<%=u.get(i).getId()%>">更新</a>
@@ -406,7 +454,8 @@
 						</div>
 					</div>
 				</form>
-				<form action="OutputCSV" method="post"><br><br>
+				<font size="3" color="red">${salaryErrMsg}</font><br>
+				<form action="OutputCSV" method="post">
 				<div class="col-sm-3" style="width: 220px">
 					<input type="month" class="form-control" name="yearAndMonth" style="background: white; height: 35px; width: 200px;">
 				</div>

@@ -118,7 +118,9 @@ public class WorkSituationEdit extends HttpServlet {
 			WorkSituationEditDao.setEditHistory(userInfo.getLoginId(), workEnd, workEndBefore, year, month, date, "work_end");
 			WorkSituationEditDao.setEditHistory(userInfo.getLoginId(), breakTime, breakTimeBefore, year, month, date, "break_time");
 			request.setAttribute("scsMsg", "変更しました");
-			doGet(request, response);
+
+			DailyWorkCheck dailyWorkCheck = new DailyWorkCheck();
+			dailyWorkCheck.doGet(request, response);
 			return;
 		}else {
 			request.setAttribute("errMsg", "入力内容に誤りがあります");

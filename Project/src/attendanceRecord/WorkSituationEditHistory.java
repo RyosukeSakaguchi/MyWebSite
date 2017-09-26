@@ -54,6 +54,8 @@ public class WorkSituationEditHistory extends HttpServlet {
 			if(disp == null) {
 				result = false;
 				request.setAttribute("dispMsg", "(最新5件)");
+			}else {
+				request.setAttribute("dispMsg", "(最新20件)");
 			}
 			request.setAttribute("result", result);
 

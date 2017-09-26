@@ -46,7 +46,7 @@ public class UserDelete extends HttpServlet {
 			String delListId[] = request.getParameterValues("delListId[]");
 			if (delListId == null) {
 				// チェックをつけていないメッセージをリクエストスコープに保存
-				request.setAttribute("noCheckMsg", "未選択です。");
+				request.setAttribute("noCheckMsg", "未選択です");
 
 				// UserListのdoGetメソッドを実行
 				UserList userList = new UserList();
@@ -110,7 +110,7 @@ public class UserDelete extends HttpServlet {
 			}
 
 			// ユーザー消去成功のメッセージをリクエストスコープに保存
-			request.setAttribute("sucMsg", "ユーザー情報の削除に成功しました。");
+			request.setAttribute("sucMsg", "ユーザー情報の削除に成功しました");
 
 			// UserListのdoGetメソッドを実行
 			UserList userList = new UserList();
@@ -126,7 +126,7 @@ public class UserDelete extends HttpServlet {
 			UserInfoDao.userDel(id);
 
 			// ユーザー消去成功のメッセージをリクエストスコープに保存
-			request.setAttribute("sucMsg", "ユーザー情報の削除に成功しました。");
+			request.setAttribute("sucMsg", "ユーザー情報の削除に成功しました");
 
 			// UserListのdoGetメソッドを実行
 			UserList userList = new UserList();

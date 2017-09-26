@@ -289,7 +289,7 @@
 									<table class="table table-striped">
 										<thead>
 											<tr>
-												<th style="text-align: center;">編集日</th>
+												<th style="text-align: center;">編集日時</th>
 												<th style="text-align: center;">編集内容</th>
 											</tr>
 										</thead>
@@ -299,7 +299,7 @@
 												int count;
 												List<WorkSituationEditBeans> workSituationEditList = (List<WorkSituationEditBeans>) request.getAttribute("workSituationEditList");
 												if(result){
-													count = 0;
+													count = workSituationEditList.size()-20;
 												}else{
 													count = workSituationEditList.size()-5;
 												}
@@ -325,7 +325,7 @@
 										<%
 											}else{
 										%>
-											<a class="btn btn-primary" href="WorkSituationEditHistory?id=<%=userInfo.getId()%>&disp=all" >全ての履歴を表示</a><br>
+											<a class="btn btn-primary" href="WorkSituationEditHistory?id=<%=userInfo.getId()%>&disp=20" >最新20件を表示</a><br>
 
 										<%
 											}

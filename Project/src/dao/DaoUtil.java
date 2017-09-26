@@ -36,6 +36,8 @@ public class DaoUtil {
 	public final int WHERE_TYPE_GENDER_OR_EQUAL = 3;
 	/** 〜より小さい(key <= value) */
 	public final int WHERE_TYPE_LESS_OR_EQUAL = 4;
+	/** 不一致(key != value) */
+	public final int WHERE_TYPE_NOT_EQUAL = 5;
 
 	/**
 	 * SearchConditionBeansのリストをもとにwhere条件を足したSQLを返す。
@@ -91,6 +93,9 @@ public class DaoUtil {
 				break;
 			case WHERE_TYPE_LESS_OR_EQUAL:
 				resulet.append(condition.getSearchKey() + " <= " + condition.getSearchValue() + "");
+				break;
+			case WHERE_TYPE_NOT_EQUAL:
+				resulet.append(condition.getSearchKey() + " != " + condition.getSearchValue());
 				break;
 			}
 

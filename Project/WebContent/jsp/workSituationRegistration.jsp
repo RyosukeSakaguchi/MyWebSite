@@ -282,6 +282,9 @@
 							<h2 class="animate-box">Work Situation Registration</h2>
 							<div align="center">
 								<font size="5" color="white">${errMsg}</font>
+							</div><br>
+							<div align="center">
+								<font size="5" color="#99FF33">${confMsg}</font>
 							</div>
 							<p class="animate-box"></p>
 							<%

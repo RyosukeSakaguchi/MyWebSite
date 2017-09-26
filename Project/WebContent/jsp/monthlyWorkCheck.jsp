@@ -295,9 +295,19 @@
 										String titalWorkTime = (String)request.getAttribute("titalWorkTime");
 										String titalOvertime = (String)request.getAttribute("titalOvertime");
 									%>
-									<ul class="pull-left left-menu">
-										<a class="btn btn-danger" href="WorkSituationDelete?id=<%=userInfo.getId()%>&year=<%=year%>&month=<%=month%>">All Delete</a><br>
-									</ul>
+									<div class="wrapper">
+									<div>
+										<a class="btn btn-danger" href="WorkSituationDelete?id=<%=userInfo.getId()%>&year=<%=year%>&month=<%=month%>">All Delete</a>
+									</div>
+									<div>
+										<form action="OutputCSV" method="post">
+											<button class="btn btn-warning" type="submit">csvに出力</button>
+											<input type="hidden" value="<%=userInfo.getId()%>" name="id">
+											<input type="hidden" value="<%=year%>" name="year">
+											<input type="hidden" value="<%=month%>" name="month">
+										</form>
+									</div>
+									</div><br>
 									<table class="table table-striped">
 										<thead>
 											<tr>

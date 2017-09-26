@@ -307,6 +307,7 @@
 											<select class="form-control" name="position" style="background: white; height: 35px; width: 200px;">
 												<%
 													List<PositionBeans> positonList = DaoUtil.findAllPosition();
+													String position = (String)request.getAttribute("position");
 													request.setAttribute("positonList",positonList);
 												%>
 												<c:choose>
@@ -316,10 +317,25 @@
 														</c:forEach>
 													</c:when>
 													<c:otherwise>
-														<option value="なし"  <%if(request.getAttribute("position").equals("なし")){%> selected <% } %>>なし</option>
-														<option value="営業" <% if(request.getAttribute("position").equals("営業")){%> selected <% } %>>営業</option>
-														<option value="事務" <% if(request.getAttribute("position").equals("事務")){%> selected <% } %>>事務</option>
-														<option value="プログラマー" <% if(request.getAttribute("position").equals("プログラマー")){%> selected <% } %>>プログラマー</option>
+														<%
+														 for(PositionBeans p : positonList){
+															 if(p.getPosition().equals(position)){
+														%>
+
+														<option value="<%=p.getPosition()%>" selected ><%=p.getPosition()%></option>
+
+														<%
+															 }else{
+
+														%>
+
+														<option value="<%=p.getPosition()%>"><%=p.getPosition()%></option>
+
+														<%
+															 }
+														 }
+
+														%>
 													</c:otherwise>
 												</c:choose>
 											</select>

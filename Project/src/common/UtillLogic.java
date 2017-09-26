@@ -10,7 +10,9 @@ import java.util.List;
 
 import javax.xml.bind.DatatypeConverter;
 
+import beans.SalaryBeans;
 import beans.WorkSituationBeans;
+import dao.SalaryMasterDao;
 import dao.WorkSituationDao;
 
 public class UtillLogic {
@@ -171,7 +173,7 @@ public class UtillLogic {
 		int totalWorkTimeInt = stringTimeToInt(totalWorkTime);
 		int totalOvertimeInt = stringTimeToInt(totalOvertime);
 		int diffTotalTimeInt = timeSubtraction(totalWorkTimeInt, totalOvertimeInt);
-		int salary = (int)(calSalary(diffTotalTimeInt) + calSalary(totalOvertimeInt) * 2);
+		int salary = (int)(calSalary(diffTotalTimeInt) + calOvertimeSalary(totalOvertimeInt));
 
 
 		return salary;
@@ -182,7 +184,17 @@ public class UtillLogic {
 		int middle = (timeInt - underTwo) % 10000;
 		int middleTwo = middle / 100;
 		int topTwo = (timeInt - middle - underTwo) / 10000;
-		return 1000.0 * ( topTwo + middleTwo / 60.0 + underTwo / 3600.0);
+		SalaryBeans salaryInfo = SalaryMasterDao.getSalaryInfo(1);
+		return (salaryInfo.getHourlyWage()) * ( topTwo + middleTwo / 60.0 + underTwo / 3600.0);
+	}
+
+	public static double calOvertimeSalary(int timeInt){
+		int underTwo = timeInt % 100;
+		int middle = (timeInt - underTwo) % 10000;
+		int middleTwo = middle / 100;
+		int topTwo = (timeInt - middle - underTwo) / 10000;
+		SalaryBeans salaryInfo = SalaryMasterDao.getSalaryInfo(1);
+		return (salaryInfo.getOvertimeHourlyWage()) * ( topTwo + middleTwo / 60.0 + underTwo / 3600.0);
 	}
 
 	public static int yearAndMonthToYear(String yearAndMonth) {
@@ -195,6 +207,24 @@ public class UtillLogic {
 		int yearAndMonthInt = Integer.parseInt(yearAndMonth.replaceAll("-", ""));
 		int month = yearAndMonthInt % 100;
 		return month;
+	}
+
+	public static int yearAndMonthAndDateToYear(String yearAndMonthAndDate) {
+		int yearAndMonthAndDateInt = Integer.parseInt(yearAndMonthAndDate.replaceAll("-", ""));
+		int year = (yearAndMonthAndDateInt - yearAndMonthAndDateToMonth(yearAndMonthAndDate) - yearAndMonthAndDateToDate(yearAndMonthAndDate)) / 10000;
+		return  year;
+	}
+
+	public static int yearAndMonthAndDateToMonth(String yearAndMonthAndDate) {
+		int yearAndMonthAndDateInt = Integer.parseInt(yearAndMonthAndDate.replaceAll("-", ""));
+		int month = ((yearAndMonthAndDateInt - yearAndMonthAndDateToDate(yearAndMonthAndDate)) % 10000) / 100;
+		return  month;
+	}
+
+	public static int yearAndMonthAndDateToDate(String yearAndMonthAndDate) {
+		int yearAndMonthAndDateInt = Integer.parseInt(yearAndMonthAndDate.replaceAll("-", ""));
+		int date = yearAndMonthAndDateInt % 100;
+		return  date;
 	}
 
 

@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="beans.UserBeans"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="beans.PositionBeans"%>
+<%@ page import="dao.DaoUtil"%>
+<%@ page import="java.util.List "%>
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -305,11 +308,27 @@
 									<br><br>
 									<label for="inputName" class="col-sm-2 control-label" style="width: 200px;"> 役職</label>
 									<div class="col-sm-3">
-										<select class="form-control" id="inputName" name="position" onblur="isEmpty(this)" style="background: white; height: 35px; width: 200px;">
-											<option value="なし" <% if(u.getPosition().equals("なし")){%> selected <% } %>>なし</option>
-											<option value="営業" <% if(u.getPosition().equals("営業")){%> selected <% } %>>営業</option>
-											<option value="事務" <% if(u.getPosition().equals("事務")){%> selected <% } %>>事務</option>
-											<option value="プログラマー" <% if(u.getPosition().equals("プログラマー")){%> selected <% } %>>プログラマー</option>
+										<select class="form-control" id="inputName" name="position"  style="background: white; height: 35px; width: 200px;">
+											<%
+												List<PositionBeans> positonList = DaoUtil.findAllPosition();
+												for(PositionBeans p : positonList){
+													if(p.getPosition().equals(u.getPosition())){
+											%>
+
+												<option value="<%=p.getPosition()%>" selected ><%=p.getPosition()%></option>
+
+											<%
+													}else{
+
+											%>
+
+											<option value="<%=p.getPosition()%>"><%=p.getPosition()%></option>
+
+											<%
+													}
+												}
+
+											%>
 										</select>
 									</div>
 									<br><br>

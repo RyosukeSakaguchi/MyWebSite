@@ -282,6 +282,7 @@
 			<div aline="center"><%=year%>年 <%=month%>月<%=date%>日 <%=name%></div><br>
 			<div align="center">
 				<br><font size="5" color="red">${errMsg}</font><br><br>
+				<font size="5" color="red">${scsMsg}</font>
 			</div>
 			<div class="fh5co-intro js-fullheight">
 				<div class="fh5co-intro-text">
@@ -289,10 +290,24 @@
 						<div class="container" style="width: 90%;">
 							<div class="row">
 								<div>
-									<ul class="pull-left left-menu">
-										<a class="btn btn-danger" href="WorkSituationDelete?id=<%=userInfo.getId()%>&year=<%=year%>&month=<%=month%>&date=<%=date%>">Delete</a>
-										<a class="btn btn-success" href="WorkSituationEdit?id=<%=userInfo.getId()%>&year=<%=year%>&month=<%=month%>&date=<%=date%>">Edit</a><br>
-									</ul>
+									<div class="wrapper">
+										<div>
+											<ul class="pull-left left-menu">
+												<a class="btn btn-danger" href="WorkSituationDelete?id=<%=userInfo.getId()%>&year=<%=year%>&month=<%=month%>&date=<%=date%>">Delete</a>
+												<a class="btn btn-success" href="WorkSituationEdit?id=<%=userInfo.getId()%>&year=<%=year%>&month=<%=month%>&date=<%=date%>">Edit</a>
+											</ul>
+										</div>
+										<div>
+											<form action="OutputCSV" method="post">
+												<button class="btn btn-warning" type="submit">csvに出力</button>
+												<input type="hidden" value="<%=userInfo.getId()%>" name="id">
+												<input type="hidden" value="<%=year%>" name="year">
+												<input type="hidden" value="<%=month%>" name="month">
+												<input type="hidden" value="<%=date%>" name="date">
+											</form>
+										</div>
+									</div>
+									<br>
 									<table class="table table-striped">
 										<thead>
 											<tr>

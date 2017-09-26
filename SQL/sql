@@ -6,3 +6,10 @@ CREATE TABLE work_situation (id SERIAL PRIMARY KEY UNIQUE Not Null, login_id var
 CREATE TABLE work_situation_edit (id SERIAL PRIMARY KEY UNIQUE Not Null, login_id varchar(255) Not Null, edit_time DATETIME Not Null, edit_content varchar(255));
 CREATE TABLE time_master (id SERIAL PRIMARY KEY UNIQUE Not Null, work_start TIME Not Null, work_end TIME Not Null, break_time TIME Not Null, work_time TIME Not Null );
 INSERT INTO time_master (work_start , work_end , break_time , work_time) VALUES ('10:00:00', '19:00:00', '01:00:00', '08:00:00');
+CREATE TABLE position_master (id SERIAL PRIMARY KEY UNIQUE Not Null, position varchar(20) UNIQUE Not Null);
+INSERT INTO position_master (position) VALUES ('なし');
+INSERT INTO position_master (position) VALUES ('営業');
+INSERT INTO position_master (position) VALUES ('事務');
+INSERT INTO position_master (position) VALUES ('プログラマー');
+CREATE TABLE salary_master (id SERIAL PRIMARY KEY UNIQUE Not Null, hourly_wage INT Not Null, overtime_hourly_wage INT Not Null );
+INSERT INTO salary_master (hourly_wage, overtime_hourly_wage) VALUES ('1500', '2000');

@@ -4,11 +4,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import beans.SearchConditionBeans;
 import beans.UserBeans;
+import beans.WorkSituationBeans;
+import common.UtillLogic;
 
 public class UserInfoDao extends DaoUtil {
 
@@ -464,49 +469,106 @@ public class UserInfoDao extends DaoUtil {
 	}
 
 	/**
-	 * * ユーザを検索する(引数に渡された値が空でないもののみ検索する)
-	 * * @param loginId
-	 * * @param userName
-	 * * @param position
-	 * * @param birthdayFrom
-	 * * @param birthdayTo
-	 * * @return
-	 * * @throws SQLException
+	 * * ユーザを検索する(引数に渡された値が空でないもののみ検索する) * @param loginId * @param userName * @param
+	 * position * @param birthdayFrom * @param birthdayTo * @return * @throws
+	 * SQLException
 	 */
-	public List<UserBeans> searchUser(String loginId, String userName, String position, String birthdayFrom, String birthdayTo)
-			throws SQLException {
+	public List<UserBeans> searchUser(String loginId, String userName, String position, String birthdayFrom,
+			String birthdayTo, String workSituation) throws SQLException {
 		Connection con = DBManager.getConnection();
 
-		String sql = "SELECT * FROM user";
+		String sql1 = "SELECT * FROM user";
+		String sql2 = "SELECT login_id FROM work_situation";
+
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String createDate = sdf.format(date);
 
 		// 各種検索要件を設定してSQLを生成
-		List<SearchConditionBeans> conditions = new ArrayList<SearchConditionBeans>();
-		conditions.add(new SearchConditionBeans("login_id", loginId, WHERE_TYPE_EQUAL));
-		conditions.add(new SearchConditionBeans("name", userName, WHERE_TYPE_LIKE_PARTIAL_MATCH));
-		conditions.add(new SearchConditionBeans("position", position, WHERE_TYPE_EQUAL));
-		conditions.add(new SearchConditionBeans("birth_date", birthdayFrom, WHERE_TYPE_GENDER_OR_EQUAL));
-		conditions.add(new SearchConditionBeans("birth_date", birthdayTo, WHERE_TYPE_LESS_OR_EQUAL));
-		sql = addWhereCondition(sql, conditions);
+		List<SearchConditionBeans> conditions1 = new ArrayList<SearchConditionBeans>();
+		conditions1.add(new SearchConditionBeans("login_id", loginId, WHERE_TYPE_EQUAL));
+		conditions1.add(new SearchConditionBeans("name", userName, WHERE_TYPE_LIKE_PARTIAL_MATCH));
+		conditions1.add(new SearchConditionBeans("position", position, WHERE_TYPE_EQUAL));
+		conditions1.add(new SearchConditionBeans("birth_date", birthdayFrom, WHERE_TYPE_GENDER_OR_EQUAL));
+		conditions1.add(new SearchConditionBeans("birth_date", birthdayTo, WHERE_TYPE_LESS_OR_EQUAL));
+		sql1 = addWhereCondition(sql1, conditions1);
 
-		PreparedStatement st = con.prepareStatement(sql);
-		ResultSet rs = st.executeQuery();
+		List<SearchConditionBeans> conditions2 = new ArrayList<SearchConditionBeans>();
+		conditions2.add(new SearchConditionBeans("create_date", createDate, WHERE_TYPE_EQUAL));
+		conditions2.add(new SearchConditionBeans("length( work_situ )", "6", WHERE_TYPE_EQUAL));
+		sql2 = addWhereCondition(sql2, conditions2);
 
-		ArrayList<UserBeans> userList = new ArrayList<UserBeans>();
 
-		while (rs.next()) {
-			UserBeans user = new UserBeans();
-			user.setId(rs.getInt("id"));
-			user.setLoginId(rs.getString("login_id"));
-			user.setName(rs.getString("name"));
-			user.setPosition(rs.getString("position"));
-			user.setBirthDate(rs.getDate("birth_date"));
-			user.setPassword(rs.getString("password"));
-			user.setCreateDate(rs.getTimestamp("create_date"));
-			user.setCreateDate(rs.getTimestamp("update_date"));
-			userList.add(user);
+		PreparedStatement st1 = con.prepareStatement(sql1);
+		ResultSet rs1 = st1.executeQuery();
+		PreparedStatement st2 = con.prepareStatement(sql2);
+		ResultSet rs2 = st2.executeQuery();
+
+		ArrayList<String> attendUserLoginIdList = new ArrayList<String>();
+
+		while (rs2.next()) {
+			String attendUserLoginId = rs2.getString("login_id");
+			attendUserLoginIdList.add(attendUserLoginId);
 		}
 
-		return userList;
+		ArrayList<UserBeans> userList1 = new ArrayList<UserBeans>();
+
+		while (rs1.next()) {
+			UserBeans user = new UserBeans();
+			user.setId(rs1.getInt("id"));
+			user.setLoginId(rs1.getString("login_id"));
+			user.setName(rs1.getString("name"));
+			user.setPosition(rs1.getString("position"));
+			user.setBirthDate(rs1.getDate("birth_date"));
+			user.setPassword(rs1.getString("password"));
+			user.setCreateDate(rs1.getTimestamp("create_date"));
+			user.setCreateDate(rs1.getTimestamp("update_date"));
+			if(workSituation.equals("")) {
+				userList1.add(user);
+			}else if(workSituation.equals("勤務中")){
+				for(String auli : attendUserLoginIdList) {
+					if(auli.equals(user.getLoginId())) {
+						userList1.add(user);
+					}
+				}
+			}else if(workSituation.equals("帰宅")){
+				boolean result = true;
+				for(String auli : attendUserLoginIdList) {
+					if(auli.equals(user.getLoginId())) {
+						result = false;
+					}
+				}
+				if(result) {
+					userList1.add(user);
+				}
+			}
+		}
+
+		ArrayList<UserBeans> userList2 = new ArrayList<UserBeans>();
+		Date today = new Date(Calendar.getInstance().getTimeInMillis());
+		String yearAndMonthAndDate = new SimpleDateFormat("yyyy-MM-dd").format(today);
+		for(UserBeans user : userList1) {
+			List<WorkSituationBeans> workSituationList = WorkSituationDao.findAll(user.getLoginId(), UtillLogic.yearAndMonthAndDateToYear(yearAndMonthAndDate), UtillLogic.yearAndMonthAndDateToMonth(yearAndMonthAndDate), UtillLogic.yearAndMonthAndDateToDate(yearAndMonthAndDate)) ;
+			for(WorkSituationBeans w : workSituationList) {
+				if(w.getWorkSitu().length() == 2) {
+					userList2.add(user);
+				}
+			}
+		}
+		for(UserBeans user1 : userList1) {
+			boolean result = true;
+			for(UserBeans user2 : userList2) {
+				if(user1.equals(user2)) {
+					result = false;
+				}
+			}
+			if(result) {
+				userList2.add(user1);
+			}
+		}
+
+
+		return userList2;
 
 	}
 

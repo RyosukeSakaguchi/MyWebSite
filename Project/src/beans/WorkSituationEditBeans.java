@@ -1,19 +1,19 @@
 package beans;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class WorkSituationEditBeans implements Serializable {
 
 	private int id;
 	private String loginId;
-	private Date editDate;
+	private Timestamp editDate;
 	private String editContent;
 
 	public WorkSituationEditBeans() {
 	}
 
-	public WorkSituationEditBeans(int id, String loginId, Date editDate, String editContent) {
+	public WorkSituationEditBeans(int id, String loginId, Timestamp editDate, String editContent) {
 		this.id = id;
 		this.loginId = loginId;
 		this.editDate = editDate;
@@ -36,11 +36,11 @@ public class WorkSituationEditBeans implements Serializable {
 		this.loginId = loginId;
 	}
 
-	public Date getEditDate() {
+	public Timestamp getEditDate() {
 		return editDate;
 	}
 
-	public void setEditDate(Date editDate) {
+	public void setEditDate(Timestamp editDate) {
 		this.editDate = editDate;
 	}
 

@@ -2,6 +2,8 @@ package attendanceRecord;
 
 import java.io.IOException;
 import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import beans.UserBeans;
+import common.UtillLogic;
 import dao.DaoUtil;
 import dao.WorkSituationDao;
 
@@ -47,17 +50,30 @@ public class WorkSituationRegistration extends HttpServlet {
 			response.sendRedirect("UserList");
 		}else {
 
-			boolean result = WorkSituationDao.isGetTodayDate(loginUser.getLoginId());
+			boolean result = WorkSituationDao.isWorking(loginUser.getLoginId());
 			boolean result2 = WorkSituationDao.isGetTodayWorkTime(loginUser.getLoginId());
 			request.setAttribute("result", result);
 			request.setAttribute("result2", result2);
 
 			if(WorkSituationDao.isOverTime("work_start")) {
-				request.setAttribute("overStartTimeMsg", "今日の勤務開始時間がまだ入力されていません。");
+				request.setAttribute("overStartTimeMsg", "今日の勤務開始時間がまだ入力されていません");
 			}
 
 			if(WorkSituationDao.isOverTime("work_end")) {
-				request.setAttribute("overEndTimeMsg", "今日の勤務終了時間と休憩時間がまだ入力されていません。");
+				request.setAttribute("overEndTimeMsg", "今日の勤務終了時間と休憩時間がまだ入力されていません");
+			}
+
+			Date now = new Date();
+			SimpleDateFormat y = new SimpleDateFormat("yyyy");
+			SimpleDateFormat m = new SimpleDateFormat("MM");
+			int year = Integer.parseInt(y.format(now));
+			int month = Integer.parseInt(m.format(now));
+
+			String titalOvertime = UtillLogic.totalOvertime(WorkSituationDao.findAll(loginUser.getLoginId(), year, month));
+			int titalOvertimeInt = UtillLogic.stringTimeToInt(titalOvertime);
+
+			if(titalOvertimeInt >= 500000) {
+				request.setAttribute("confMsg", "今月の残業時間が50時間を超えています");
 			}
 
 			// workSituationRegistration.jspへフォワード
@@ -89,8 +105,8 @@ public class WorkSituationRegistration extends HttpServlet {
 			return;
 		} else if (situation.equals("end")) {
 			String breakTime = request.getParameter("breakTime");
-			boolean result = WorkSituationDao.workEnd(loginId, breakTime);
-
+			Time workEndMaster = DaoUtil.getTime(1, "work_end");
+			boolean result = WorkSituationDao.workEnd(loginId, breakTime, workEndMaster);
 
 			if (result) {
 				// RegistrationCompleteへフォワード

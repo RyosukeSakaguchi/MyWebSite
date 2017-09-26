@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ public class WorkSituationEditDao {
 			// WorkSituationBeansインスタンスに設定し、ArrayListインスタンスに追加
 			while (rs.next()) {
 				int id = rs.getInt("id");
-				Date editDate = rs.getDate("edit_time");
+				Timestamp editDate = rs.getTimestamp("edit_time");
 				String editContent = rs.getString("edit_content");
 				WorkSituationEditBeans workSituationEdit = new WorkSituationEditBeans(id, loginId, editDate,
 						editContent);

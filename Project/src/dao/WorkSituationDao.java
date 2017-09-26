@@ -213,7 +213,7 @@ public class WorkSituationDao {
 		}
 	}
 
-	public static boolean workEnd(String loginId, String breakTime) {
+	public static boolean workEnd(String loginId, String breakTime, Time workEndMaster) {
 		Connection conn = null;
 		boolean result = true;
 
@@ -247,8 +247,25 @@ public class WorkSituationDao {
 				overtimeInt = UtillLogic.timeSubtraction(workTimeInt, workTimeMasterInt);
 				overtime = UtillLogic.intToStringTime(overtimeInt);
 			}
+
+			int nowInt = Integer.parseInt(now.toString().replaceAll(":", ""));
+			int workEndMasterInt = Integer.parseInt(workEndMaster.toString().replaceAll(":", ""));
+
+			String yearAndMonthAndDate = new SimpleDateFormat("yyyy-MM-dd").format(today);
+
+			List<WorkSituationBeans> workSituationList = findAll(loginId, UtillLogic.yearAndMonthAndDateToYear(yearAndMonthAndDate), UtillLogic.yearAndMonthAndDateToMonth(yearAndMonthAndDate), UtillLogic.yearAndMonthAndDateToDate(yearAndMonthAndDate)) ;
+			String workSituation = "";
+			for(WorkSituationBeans w : workSituationList) {
+				workSituation = w.getWorkSitu();
+			}
+
+			if(nowInt >= workEndMasterInt) {
+				workSituation = workSituation + " → 帰宅";
+			}else {
+				workSituation = workSituation + " → 早退";
+			}
 			// INSERT文を準備
-			String sql = "UPDATE work_situation SET work_end = '" + now + "' , break_time = '" + breakTime
+			String sql = "UPDATE work_situation SET work_situ = '" + workSituation + "' ,work_end = '" + now + "' , break_time = '" + breakTime
 					+ "' ,  work_time = '" + workTime + "', overtime = '" + overtime + "' WHERE login_id = '" + loginId
 					+ "' and create_date = '" + today + "'";
 			// INSERTを実行し、結果表を取得
@@ -281,11 +298,22 @@ public class WorkSituationDao {
 			int workStartInt = UtillLogic.stringTimeToInt(workStart);
 			Time workStartMaster = DaoUtil.getTime(1, "work_start");
 			int workStartMasterInt = UtillLogic.timeToInt(workStartMaster);
+			int workEndInt = UtillLogic.stringTimeToInt(workEnd);
+			Time workEndMaster = DaoUtil.getTime(1, "work_end");
+			int workEndMasterInt = UtillLogic.timeToInt(workEndMaster);
 			String workSituation;
 			if (workStartInt > workStartMasterInt) {
-				workSituation = "遅刻";
+				if(workEndInt >= workEndMasterInt) {
+					workSituation = "遅刻 → 退社";
+				}else {
+					workSituation = "遅刻 → 早退";
+				}
 			} else {
-				workSituation = "出席";
+				if(workEndInt >= workEndMasterInt) {
+					workSituation = "出席 → 退社";
+				}else {
+					workSituation = "出席 → 早退";
+				}
 			}
 			String overtime = "00:00:00";
 			String workTime = "00:00:00";
@@ -337,7 +365,7 @@ public class WorkSituationDao {
 		return result;
 	}
 
-	public static boolean isGetTodayDate(String loginId) {
+	public static boolean isWorking(String loginId) {
 		Connection conn = null;
 
 		Date today = new Date(System.currentTimeMillis());
@@ -349,7 +377,7 @@ public class WorkSituationDao {
 			conn = DBManager.getConnection();
 
 			// SELECT文を準備
-			String sql = "select * from work_situation where login_id = ? and create_date = ?";
+			String sql = "select work_situ from work_situation where login_id = ? and create_date = ?";
 			PreparedStatement pStmt = conn.prepareStatement(sql);
 			pStmt.setString(1, loginId);
 			pStmt.setString(2, todayString);
@@ -359,7 +387,9 @@ public class WorkSituationDao {
 
 			// 結果表に格納されたレコード数で繰り返し
 			if (rs.next()) {
-				return true;
+				if(rs.getString("work_situ").length() == 2) {
+					return true;
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -484,5 +514,6 @@ public class WorkSituationDao {
 		}
 
 	}
+
 
 }

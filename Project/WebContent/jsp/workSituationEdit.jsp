@@ -280,7 +280,6 @@
 		<div class="container" style="width: 90%;">
 			<div align="center">
 				<br><font size="5" color="red">${errMsg}</font>
-				<font size="5" color="red">${scsMsg}</font>
 			</div>
 			<div aline="center"><%=year%>年 <%=month%>月<%=date%>日 <%=name%></div>
 			<br><br>

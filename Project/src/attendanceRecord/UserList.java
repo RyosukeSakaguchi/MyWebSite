@@ -74,7 +74,8 @@ public class UserList extends HttpServlet {
 				request.getParameter("name"),
 				request.getParameter("position"),
 				request.getParameter("birth_date_from"),
-				request.getParameter("birth_date_to")
+				request.getParameter("birth_date_to"),
+				request.getParameter("workSituation")
 			);
 
 			// リクエストパラメータを保存
