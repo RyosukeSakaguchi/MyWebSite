@@ -1,10 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html lang="en-US">
+
 	<head>
 		<meta charset="utf-8">
 		<title>ログイン画面</title>
 		<link rel="stylesheet" href="/AttendanceRecord/jsp/css/original/LoginScreen.css">
 	</head>
+
 	<body>
 		<div align="center">
 			<br><br><br>
@@ -19,3 +21,5 @@
 			</form>
 		</div>
 	</body>
+
+</html>

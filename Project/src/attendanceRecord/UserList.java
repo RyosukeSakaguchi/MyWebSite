@@ -87,6 +87,8 @@ public class UserList extends HttpServlet {
 			request.setAttribute("position", request.getParameter("position"));
 			request.setAttribute("birth_date_from", request.getParameter("birth_date_from"));
 			request.setAttribute("birth_date_to", request.getParameter("birth_date_to"));
+			request.setAttribute("workSituation", request.getParameter("workSituation"));
+
 
 			request.getRequestDispatcher("jsp/userList.jsp").forward(request, response);
 		} catch (Exception e) {
