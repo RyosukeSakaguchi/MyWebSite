@@ -61,7 +61,7 @@ public class WorkSituationEditDao {
 		Connection conn = null;
 
 		Date today = new Date(System.currentTimeMillis());
-		SimpleDateFormat d = new SimpleDateFormat("yyy-MM-dd");
+		SimpleDateFormat d = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
 		String todayString = d.format(today);
 
 		try {
@@ -97,7 +97,7 @@ public class WorkSituationEditDao {
 		Connection conn = null;
 
 		Date today = new Date(System.currentTimeMillis());
-		SimpleDateFormat d = new SimpleDateFormat("yyy-MM-dd");
+		SimpleDateFormat d = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
 		String todayString = d.format(today);
 
 		try {
@@ -135,7 +135,7 @@ public class WorkSituationEditDao {
 
 		if (!time.equals(timeBefore)) {
 			Date today = new Date(System.currentTimeMillis());
-			SimpleDateFormat d = new SimpleDateFormat("yyy-MM-dd");
+			SimpleDateFormat d = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
 			String todayString = d.format(today);
 
 			try {
