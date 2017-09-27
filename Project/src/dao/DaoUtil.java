@@ -12,7 +12,7 @@ import java.util.List;
 
 import beans.PositionBeans;
 import beans.SearchConditionBeans;
-import common.UtillLogic;
+import common.UtilLogic;
 
 /**
  * + * Daoに関する共通クラス +
@@ -53,7 +53,7 @@ public class DaoUtil {
 		for (SearchConditionBeans condition : conditions) {
 
 			// 値がnullまたは空文字の場合は以降の処理をスキップ
-			if (UtillLogic.isEmpty(condition.getSearchValue())) {
+			if (UtilLogic.isEmpty(condition.getSearchValue())) {
 				continue;
 			}
 

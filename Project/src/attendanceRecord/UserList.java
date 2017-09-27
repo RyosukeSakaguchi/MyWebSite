@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import beans.UserBeans;
+import common.UtilLogic;
 import dao.UserInfoDao;
 
 /**
@@ -47,6 +48,7 @@ public class UserList extends HttpServlet {
 		}else {
 			// userテーブルにある全てのユーザーを取り出す
 			List<UserBeans> userList = dao.UserInfoDao.findAll();
+			userList = UtilLogic.userListSort(userList);
 			request.setAttribute("userList", userList);
 
 			// userList.jspへフォワード

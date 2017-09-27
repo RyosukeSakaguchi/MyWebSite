@@ -1,68 +1,70 @@
 package common;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 
 import beans.UserBeans;
 import beans.WorkSituationBeans;;
 
-public class CSVFileWrite extends UtillLogic {
+public class CsvFileWrite extends UtilLogic {
 
-	public static void getSalary(List<UserBeans> userList, int year, int month) {
+	public static void getSalary(HttpServletResponse response, List<UserBeans> userList, int year, int month)
+			throws ServletException, IOException {
+
+		// ダウンロードファイル名を生成する
+		String filename = year + "年" + month + "月.csv";
+
+		// コンテキストにダウンロードファイル情報を設定する
+		response.setContentType("application/csv;charset=Shift-JIS");
+		response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
+
+		PrintWriter pw = response.getWriter();
+
+		pw.print("ユーザー名");
+		pw.print(",");
+		pw.print("月給");
+		pw.println();
+
+		for (UserBeans user : userList) {
+			if (user.getId() != 1) {
+				// 内容を指定する
+				pw.print(user.getName());
+				pw.print(",");
+				pw.print(getMonthlySalary(user.getLoginId(), user.getPosition(), year, month));
+				pw.print("円");
+				pw.print("\n");
+			}
+		}
 
 		try {
-			// 出力先を作成する
-			OutputStream fos = new FileOutputStream(
-					"/Users/sakaguchimikiya/Documents/github/MyWebSite/CSV/" + year + "年" + month + "月.csv", false); // ※１
-			fos.write( 0xef );
-			fos.write( 0xbb );
-			fos.write( 0xbf );
-			PrintWriter pw = new PrintWriter(new OutputStreamWriter( fos, "UTF8" ));
-
-			pw.print("ユーザー名");
-			pw.print(",");
-			pw.print("月給");
-			pw.println();
-
-			for (UserBeans user : userList) {
-				if (user.getId() != 1) {
-					// 内容を指定する
-					pw.print(user.getName());
-					pw.print(",");
-					pw.print(getMonthlySalary(user.getLoginId(), year, month));
-					pw.print("円");
-					pw.println();
-				}
-			}
-
-			// ファイルに書き出す
 			pw.close();
-
-			// 終了メッセージを画面に出力する
-			System.out.println("出力が完了しました。");
-
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			// 例外時処理
 			ex.printStackTrace();
 		}
+		// 終了メッセージを画面に出力する
+		System.out.println("出力が完了しました。");
 	}
 
-	public static void getMonthlyWorkSituation(List<WorkSituationBeans> workSituationList, String userName, int year,
-			int month, String titalWorkTime, String titalOvertime) {
+	public static void getMonthlyWorkSituation(HttpServletResponse response, List<WorkSituationBeans> workSituationList,
+			String userName, int year, int month, String titalWorkTime, String titalOvertime)
+			throws ServletException, IOException {
 
-		try {
-			// 出力先を作成する
-			OutputStream fos = new FileOutputStream("/Users/sakaguchimikiya/Documents/github/MyWebSite/CSV/" + year + "年" + month
-					+ "月" + userName + ".csv", false); // ※１
-			fos.write( 0xef );
-			fos.write( 0xbb );
-			fos.write( 0xbf );
-			PrintWriter pw = new PrintWriter(new OutputStreamWriter( fos, "UTF8" ));
+
+			// ダウンロードファイル名を生成する
+			String filename = year + "年" + month + "月" + userName + ".csv";
+
+			// コンテキストにダウンロードファイル情報を設定する
+			response.setContentType("application/csv;charset=Shift-JIS");
+			response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
+
+			PrintWriter pw = response.getWriter();
 
 			// 内容を指定する
 			pw.print("日付");
@@ -111,28 +113,30 @@ public class CSVFileWrite extends UtillLogic {
 			pw.print(titalOvertime);
 			pw.println();
 
-			// ファイルに書き出す
-			pw.close();
+			try {
+				pw.close();
+			} catch (Exception ex) {
+				// 例外時処理
+				ex.printStackTrace();
+			}
 
 			// 終了メッセージを画面に出力する
 			System.out.println("出力が完了しました。");
-
-		} catch (IOException ex) {
-			// 例外時処理
-			ex.printStackTrace();
-		}
 	}
 
-	public static void getDailyWorkSituation(List<WorkSituationBeans> workSituationList, String userName, int year, int month, int date) {
+	public static void getDailyWorkSituation(HttpServletResponse response, List<WorkSituationBeans> workSituationList,
+			String userName, int year, int month, int date) throws ServletException, IOException {
 
 		try {
-			// 出力先を作成する
-			OutputStream fos = new FileOutputStream("/Users/sakaguchimikiya/Documents/github/MyWebSite/CSV/" + year + "年" + month
-					+ "月" + date + "日" +userName + ".csv", false); // ※１
-			fos.write( 0xef );
-			fos.write( 0xbb );
-			fos.write( 0xbf );
-			PrintWriter pw = new PrintWriter(new OutputStreamWriter( fos, "UTF8" ));
+
+			// ダウンロードファイル名を生成する
+			String filename = year + "年" + month + "月" + date + "日" + userName + ".csv";
+
+			// コンテキストにダウンロードファイル情報を設定する
+			response.setContentType("application/csv;charset=Shift-JIS");
+			response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
+
+			PrintWriter pw = response.getWriter();
 
 			// 内容を指定する
 			pw.print("勤務状況");

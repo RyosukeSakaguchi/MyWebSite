@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import beans.UserBeans;
-import common.UtillLogic;
+import common.UtilLogic;
 import dao.UserInfoDao;
 
 /**
@@ -81,7 +81,7 @@ public class SignUp extends HttpServlet {
 		// 暗号化されたパスワードとパスワード(確認)を生成
 		String encPass = null;
 		try {
-			encPass = UtillLogic.encrpt(password);
+			encPass = UtilLogic.encrpt(password);
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}

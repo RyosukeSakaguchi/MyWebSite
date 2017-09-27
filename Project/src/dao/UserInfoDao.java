@@ -6,14 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import beans.SearchConditionBeans;
 import beans.UserBeans;
-import beans.WorkSituationBeans;
-import common.UtillLogic;
+import common.UtilLogic;
 
 public class UserInfoDao extends DaoUtil {
 
@@ -146,6 +144,7 @@ public class UserInfoDao extends DaoUtil {
 				userInfo.setName(rs.getString("name"));
 				userInfo.setBirthDate(rs.getDate("birth_date"));
 				userInfo.setPassword(rs.getString("password"));
+				userInfo.setPosition(rs.getString("position"));
 				userInfo.setCreateDate(rs.getTimestamp("create_date"));
 				userInfo.setUpdateDate(rs.getTimestamp("update_date"));
 				userList.add(userInfo);
@@ -511,7 +510,7 @@ public class UserInfoDao extends DaoUtil {
 			attendUserLoginIdList.add(attendUserLoginId);
 		}
 
-		ArrayList<UserBeans> userList1 = new ArrayList<UserBeans>();
+		List<UserBeans> userList = new ArrayList<UserBeans>();
 
 		while (rs1.next()) {
 			UserBeans user = new UserBeans();
@@ -524,11 +523,11 @@ public class UserInfoDao extends DaoUtil {
 			user.setCreateDate(rs1.getTimestamp("create_date"));
 			user.setCreateDate(rs1.getTimestamp("update_date"));
 			if(workSituation.equals("")) {
-				userList1.add(user);
+				userList.add(user);
 			}else if(workSituation.equals("勤務中")){
 				for(String auli : attendUserLoginIdList) {
 					if(auli.equals(user.getLoginId())) {
-						userList1.add(user);
+						userList.add(user);
 					}
 				}
 			}else if(workSituation.equals("帰宅")){
@@ -539,36 +538,14 @@ public class UserInfoDao extends DaoUtil {
 					}
 				}
 				if(result) {
-					userList1.add(user);
+					userList.add(user);
 				}
 			}
 		}
 
-		ArrayList<UserBeans> userList2 = new ArrayList<UserBeans>();
-		Date today = new Date(Calendar.getInstance().getTimeInMillis());
-		String yearAndMonthAndDate = new SimpleDateFormat("yyyy-MM-dd").format(today);
-		for(UserBeans user : userList1) {
-			List<WorkSituationBeans> workSituationList = WorkSituationDao.findAll(user.getLoginId(), UtillLogic.yearAndMonthAndDateToYear(yearAndMonthAndDate), UtillLogic.yearAndMonthAndDateToMonth(yearAndMonthAndDate), UtillLogic.yearAndMonthAndDateToDate(yearAndMonthAndDate)) ;
-			for(WorkSituationBeans w : workSituationList) {
-				if(w.getWorkSitu().length() == 2) {
-					userList2.add(user);
-				}
-			}
-		}
-		for(UserBeans user1 : userList1) {
-			boolean result = true;
-			for(UserBeans user2 : userList2) {
-				if(user1.equals(user2)) {
-					result = false;
-				}
-			}
-			if(result) {
-				userList2.add(user1);
-			}
-		}
+		userList = UtilLogic.userListSort(userList);
 
-
-		return userList2;
+		return userList;
 
 	}
 

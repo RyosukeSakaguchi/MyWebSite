@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import beans.UserBeans;
-import common.UtillLogic;
+import common.UtilLogic;
 
 /**
  * Servlet implementation class LoginScreen
@@ -68,7 +68,7 @@ public class LoginScreen extends HttpServlet {
 		//暗号化されたパスワードを生成
 		String encPass = null;
 		try {
-			encPass = UtillLogic.encrpt(password);
+			encPass = UtilLogic.encrpt(password);
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}

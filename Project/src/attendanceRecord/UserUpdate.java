@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import beans.UserBeans;
-import common.UtillLogic;
+import common.UtilLogic;
 import dao.UserInfoDao;
 
 /**
@@ -90,8 +90,8 @@ public class UserUpdate extends HttpServlet {
 		String encPass = null;
 		String encPassConf = null;
 		try {
-			encPass = UtillLogic.encrpt(password);
-			encPassConf = UtillLogic.encrpt(passwordConf);
+			encPass = UtilLogic.encrpt(password);
+			encPassConf = UtilLogic.encrpt(passwordConf);
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}

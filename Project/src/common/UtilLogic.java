@@ -5,17 +5,21 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.DatatypeConverter;
 
 import beans.SalaryBeans;
+import beans.UserBeans;
 import beans.WorkSituationBeans;
 import dao.SalaryMasterDao;
 import dao.WorkSituationDao;
 
-public class UtillLogic {
+public class UtilLogic {
 
 	/**
 	 * パスワードを暗号化するメソッド
@@ -165,7 +169,7 @@ public class UtillLogic {
 		return timeNameJa;
 	}
 
-	public static int getMonthlySalary(String loginId, int year, int month){
+	public static int getMonthlySalary(String loginId, String position, int year, int month){
 		List<WorkSituationBeans> workSituationList = new ArrayList<WorkSituationBeans>();
 		workSituationList = WorkSituationDao.findAll(loginId, year, month);
 		String totalWorkTime = totalWorkTime(workSituationList);
@@ -173,27 +177,26 @@ public class UtillLogic {
 		int totalWorkTimeInt = stringTimeToInt(totalWorkTime);
 		int totalOvertimeInt = stringTimeToInt(totalOvertime);
 		int diffTotalTimeInt = timeSubtraction(totalWorkTimeInt, totalOvertimeInt);
-		int salary = (int)(calSalary(diffTotalTimeInt) + calOvertimeSalary(totalOvertimeInt));
-
+		int salary = (int)(calSalary(diffTotalTimeInt, position) + calOvertimeSalary(totalOvertimeInt, position));
 
 		return salary;
 	}
 
-	public static double calSalary(int timeInt){
+	public static double calSalary(int timeInt, String position){
 		int underTwo = timeInt % 100;
 		int middle = (timeInt - underTwo) % 10000;
 		int middleTwo = middle / 100;
 		int topTwo = (timeInt - middle - underTwo) / 10000;
-		SalaryBeans salaryInfo = SalaryMasterDao.getSalaryInfo(1);
+		SalaryBeans salaryInfo = SalaryMasterDao.getSalaryInfo(position);
 		return (salaryInfo.getHourlyWage()) * ( topTwo + middleTwo / 60.0 + underTwo / 3600.0);
 	}
 
-	public static double calOvertimeSalary(int timeInt){
+	public static double calOvertimeSalary(int timeInt, String position){
 		int underTwo = timeInt % 100;
 		int middle = (timeInt - underTwo) % 10000;
 		int middleTwo = middle / 100;
 		int topTwo = (timeInt - middle - underTwo) / 10000;
-		SalaryBeans salaryInfo = SalaryMasterDao.getSalaryInfo(1);
+		SalaryBeans salaryInfo = SalaryMasterDao.getSalaryInfo(position);
 		return (salaryInfo.getOvertimeHourlyWage()) * ( topTwo + middleTwo / 60.0 + underTwo / 3600.0);
 	}
 
@@ -227,6 +230,35 @@ public class UtillLogic {
 		return  date;
 	}
 
+	public static List<UserBeans> userListSort(List<UserBeans> userList) {
+
+		ArrayList<UserBeans> users = new ArrayList<UserBeans>();
+		Date today = new Date(Calendar.getInstance().getTimeInMillis());
+		String yearAndMonthAndDate = new SimpleDateFormat("yyyy-MM-dd").format(today);
+
+		for(UserBeans user : userList) {
+			List<WorkSituationBeans> workSituationList = WorkSituationDao.findAll(user.getLoginId(), UtilLogic.yearAndMonthAndDateToYear(yearAndMonthAndDate), UtilLogic.yearAndMonthAndDateToMonth(yearAndMonthAndDate), UtilLogic.yearAndMonthAndDateToDate(yearAndMonthAndDate)) ;
+			for(WorkSituationBeans w : workSituationList) {
+				if(w.getWorkSitu().length() == 2) {
+					users.add(user);
+				}
+			}
+		}
+
+		for(UserBeans user1 : userList) {
+			boolean result = true;
+			for(UserBeans user2 : users) {
+				if(user1.equals(user2)) {
+					result = false;
+				}
+			}
+			if(result) {
+				users.add(user1);
+			}
+		}
+
+		return users;
+	}
 
 
 }

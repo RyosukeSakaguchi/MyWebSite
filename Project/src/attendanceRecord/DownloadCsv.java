@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import beans.UserBeans;
 import beans.WorkSituationBeans;
-import common.CSVFileWrite;
-import common.UtillLogic;
+import common.CsvFileWrite;
+import common.UtilLogic;
 import dao.UserInfoDao;
 import dao.WorkSituationDao;
 
@@ -21,13 +21,13 @@ import dao.WorkSituationDao;
  * Servlet implementation class OutputCSV
  */
 @WebServlet("/OutputCSV")
-public class OutputCSV extends HttpServlet {
+public class DownloadCsv extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public OutputCSV() {
+	public DownloadCsv() {
 		super();
 	}
 
@@ -52,7 +52,7 @@ public class OutputCSV extends HttpServlet {
 
 		if (yearAndMonth != null) {
 
-			if(yearAndMonth.replaceAll("-", "") == "") {
+			if (yearAndMonth.replaceAll("-", "") == "") {
 
 				request.setAttribute("salaryErrMsg", "入力に誤りがあります");
 
@@ -62,14 +62,13 @@ public class OutputCSV extends HttpServlet {
 				return;
 			}
 
-			int year = UtillLogic.yearAndMonthToYear(yearAndMonth);
-			int month = UtillLogic.yearAndMonthToMonth(yearAndMonth);
+			int year = UtilLogic.yearAndMonthToYear(yearAndMonth);
+			int month = UtilLogic.yearAndMonthToMonth(yearAndMonth);
 
 			List<UserBeans> userList = new ArrayList<UserBeans>();
 			userList = UserInfoDao.findAll();
 
-
-			CSVFileWrite.getSalary(userList, year, month);
+			CsvFileWrite.getSalary(response, userList, year, month);
 
 			// UserListへリダイレクト
 			response.sendRedirect("UserList");
@@ -86,10 +85,10 @@ public class OutputCSV extends HttpServlet {
 			workSituationList = WorkSituationDao.findAll(userInfo.getLoginId(), year, month);
 			request.setAttribute("workSituationList", workSituationList);
 
-			String titalWorkTime = UtillLogic.totalWorkTime(workSituationList);
-			String titalOvertime = UtillLogic.totalOvertime(workSituationList);
+			String titalWorkTime = UtilLogic.totalWorkTime(workSituationList);
+			String titalOvertime = UtilLogic.totalOvertime(workSituationList);
 
-			CSVFileWrite.getMonthlyWorkSituation(workSituationList, userInfo.getName(), year, month, titalWorkTime,
+			CsvFileWrite.getMonthlyWorkSituation(response, workSituationList, userInfo.getName(), year, month, titalWorkTime,
 					titalOvertime);
 
 			// MonyhlyWorkCheckへリダイレクト
@@ -109,10 +108,10 @@ public class OutputCSV extends HttpServlet {
 			workSituationList = WorkSituationDao.findAll(userInfo.getLoginId(), year, month, date);
 			request.setAttribute("workSituationList", workSituationList);
 
-			CSVFileWrite.getDailyWorkSituation(workSituationList, userInfo.getName(), year, month, date);
+			CsvFileWrite.getDailyWorkSituation(response, workSituationList, userInfo.getName(), year, month, date);
 
 			// DailyWorkCheckへリダイレクト
-			response.sendRedirect("DailyWorkCheck?id=" + id + "&year=" + year + "&month=" + month + "&date=" +date );
+			response.sendRedirect("DailyWorkCheck?id=" + id + "&year=" + year + "&month=" + month + "&date=" + date);
 			return;
 		}
 	}

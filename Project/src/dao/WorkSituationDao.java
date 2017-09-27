@@ -13,7 +13,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import beans.WorkSituationBeans;
-import common.UtillLogic;
+import common.UtilLogic;
 
 public class WorkSituationDao {
 
@@ -227,25 +227,25 @@ public class WorkSituationDao {
 			Time workStart = getTime(loginId, today, "work_start");
 			Time workTimeMaster = DaoUtil.getTime(1, "work_time");
 
-			int workTimeInt = UtillLogic.timeSubtraction(
-					UtillLogic.timeSubtraction(UtillLogic.timeToInt(now), UtillLogic.timeToInt(workStart)),
-					UtillLogic.stringTimeToInt(breakTime));
+			int workTimeInt = UtilLogic.timeSubtraction(
+					UtilLogic.timeSubtraction(UtilLogic.timeToInt(now), UtilLogic.timeToInt(workStart)),
+					UtilLogic.stringTimeToInt(breakTime));
 
 			if (workTimeInt < 0) {
 				result = false;
 				return result;
 			}
 
-			String workTime = UtillLogic.intToStringTime(workTimeInt);
+			String workTime = UtilLogic.intToStringTime(workTimeInt);
 
 			String overtime = "00:00:00";
 
-			int workTimeMasterInt = UtillLogic.timeToInt(workTimeMaster);
+			int workTimeMasterInt = UtilLogic.timeToInt(workTimeMaster);
 
 			if (workTimeMasterInt < workTimeInt) {
 				int overtimeInt;
-				overtimeInt = UtillLogic.timeSubtraction(workTimeInt, workTimeMasterInt);
-				overtime = UtillLogic.intToStringTime(overtimeInt);
+				overtimeInt = UtilLogic.timeSubtraction(workTimeInt, workTimeMasterInt);
+				overtime = UtilLogic.intToStringTime(overtimeInt);
 			}
 
 			int nowInt = Integer.parseInt(now.toString().replaceAll(":", ""));
@@ -253,7 +253,7 @@ public class WorkSituationDao {
 
 			String yearAndMonthAndDate = new SimpleDateFormat("yyyy-MM-dd").format(today);
 
-			List<WorkSituationBeans> workSituationList = findAll(loginId, UtillLogic.yearAndMonthAndDateToYear(yearAndMonthAndDate), UtillLogic.yearAndMonthAndDateToMonth(yearAndMonthAndDate), UtillLogic.yearAndMonthAndDateToDate(yearAndMonthAndDate)) ;
+			List<WorkSituationBeans> workSituationList = findAll(loginId, UtilLogic.yearAndMonthAndDateToYear(yearAndMonthAndDate), UtilLogic.yearAndMonthAndDateToMonth(yearAndMonthAndDate), UtilLogic.yearAndMonthAndDateToDate(yearAndMonthAndDate)) ;
 			String workSituation = "";
 			for(WorkSituationBeans w : workSituationList) {
 				workSituation = w.getWorkSitu();
@@ -295,12 +295,12 @@ public class WorkSituationDao {
 			// データベースへ接続
 			conn = DBManager.getConnection();
 
-			int workStartInt = UtillLogic.stringTimeToInt(workStart);
+			int workStartInt = UtilLogic.stringTimeToInt(workStart);
 			Time workStartMaster = DaoUtil.getTime(1, "work_start");
-			int workStartMasterInt = UtillLogic.timeToInt(workStartMaster);
-			int workEndInt = UtillLogic.stringTimeToInt(workEnd);
+			int workStartMasterInt = UtilLogic.timeToInt(workStartMaster);
+			int workEndInt = UtilLogic.stringTimeToInt(workEnd);
 			Time workEndMaster = DaoUtil.getTime(1, "work_end");
-			int workEndMasterInt = UtillLogic.timeToInt(workEndMaster);
+			int workEndMasterInt = UtilLogic.timeToInt(workEndMaster);
 			String workSituation;
 			if (workStartInt > workStartMasterInt) {
 				if(workEndInt >= workEndMasterInt) {
@@ -318,27 +318,27 @@ public class WorkSituationDao {
 			String overtime = "00:00:00";
 			String workTime = "00:00:00";
 
-			if (UtillLogic.stringTimeToInt(workEnd) != 0) {
-				int workTimeInt = UtillLogic.timeSubtraction(
-						UtillLogic.timeSubtraction(UtillLogic.stringTimeToInt(workEnd), workStartInt),
-						UtillLogic.stringTimeToInt(breakTime));
+			if (UtilLogic.stringTimeToInt(workEnd) != 0) {
+				int workTimeInt = UtilLogic.timeSubtraction(
+						UtilLogic.timeSubtraction(UtilLogic.stringTimeToInt(workEnd), workStartInt),
+						UtilLogic.stringTimeToInt(breakTime));
 
 				if (workTimeInt < 0) {
 					result = false;
 					return result;
 				}
 
-				workTime = UtillLogic.intToStringTime(workTimeInt);
+				workTime = UtilLogic.intToStringTime(workTimeInt);
 
 
 
 				Time workTimeMaster = DaoUtil.getTime(1, "work_time");
-				int workTimeMasterInt = UtillLogic.timeToInt(workTimeMaster);
+				int workTimeMasterInt = UtilLogic.timeToInt(workTimeMaster);
 
 				if (workTimeMasterInt < workTimeInt) {
 					int overtimeInt;
-					overtimeInt = UtillLogic.timeSubtraction(workTimeInt, workTimeMasterInt);
-					overtime = UtillLogic.intToStringTime(overtimeInt);
+					overtimeInt = UtilLogic.timeSubtraction(workTimeInt, workTimeMasterInt);
+					overtime = UtilLogic.intToStringTime(overtimeInt);
 				}
 			}
 
@@ -363,6 +363,45 @@ public class WorkSituationDao {
 			}
 		}
 		return result;
+	}
+
+	public static boolean isBeforeWorking(String loginId) {
+		Connection conn = null;
+
+		Date today = new Date(System.currentTimeMillis());
+		SimpleDateFormat d = new SimpleDateFormat("yyy-MM-dd");
+		String todayString = d.format(today);
+
+		try {
+			// データベースへ接続
+			conn = DBManager.getConnection();
+
+			// SELECT文を準備
+			String sql = "select work_situ from work_situation where login_id = ? and create_date = ?";
+			PreparedStatement pStmt = conn.prepareStatement(sql);
+			pStmt.setString(1, loginId);
+			pStmt.setString(2, todayString);
+
+			// SELECTを実行し、結果表（ResultSet）を取得
+			ResultSet rs = pStmt.executeQuery();
+
+			// 結果表に格納されたレコード数で繰り返し
+			if (rs.next()) {
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// データベース切断
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return true;
 	}
 
 	public static boolean isWorking(String loginId) {
@@ -406,7 +445,7 @@ public class WorkSituationDao {
 		return false;
 	}
 
-	public static boolean isGetTodayWorkTime(String loginId) {
+	public static boolean isAfterWorking(String loginId) {
 		Connection conn = null;
 
 		Date today = new Date(System.currentTimeMillis());
@@ -418,7 +457,7 @@ public class WorkSituationDao {
 			conn = DBManager.getConnection();
 
 			// SELECT文を準備
-			String sql = "select work_time from work_situation where login_id = ? and create_date = ?";
+			String sql = "select work_situ from work_situation where login_id = ? and create_date = ?";
 			PreparedStatement pStmt = conn.prepareStatement(sql);
 			pStmt.setString(1, loginId);
 			pStmt.setString(2, todayString);
@@ -428,8 +467,8 @@ public class WorkSituationDao {
 
 			// 結果表に格納されたレコード数で繰り返し
 			if (rs.next()) {
-				if (rs.getString("work_time").equals("00:00:00")) {
-					return false;
+				if(rs.getString("work_situ").length() == 7) {
+					return true;
 				}
 			}
 		} catch (SQLException e) {
@@ -444,7 +483,7 @@ public class WorkSituationDao {
 				}
 			}
 		}
-		return true;
+		return false;
 	}
 
 	public static boolean isOverTime(String timeName) {
@@ -466,7 +505,7 @@ public class WorkSituationDao {
 			// 結果表に格納されたレコード数で繰り返し
 			if (rs.next()) {
 				String timeString = rs.getString(timeName);
-				if (UtillLogic.timeToInt(now) > UtillLogic.stringTimeToInt(timeString)) {
+				if (UtilLogic.timeToInt(now) > UtilLogic.stringTimeToInt(timeString)) {
 					return true;
 				}
 			}
@@ -495,7 +534,6 @@ public class WorkSituationDao {
 			String sql = "DELETE FROM work_situation WHERE login_id =?";
 			PreparedStatement pStmt = conn.prepareStatement(sql);
 			pStmt.setString(1, loginId);
-			System.out.println(pStmt);
 
 			// DELETEを実行
 			pStmt.executeUpdate();

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import beans.WorkSituationEditBeans;
-import common.UtillLogic;
+import common.UtilLogic;
 
 public class WorkSituationEditDao {
 
@@ -149,7 +149,7 @@ public class WorkSituationEditDao {
 				pStmt.setString(1, loginId);
 				pStmt.setString(2, todayString);
 				pStmt.setString(3, createDateYear + "年" + createDateMonth + "月" + createDateDate + "日の"
-						+ UtillLogic.timeNameJa(timeName) + "を" + timeBefore + "から" + time + "に変更しました。");
+						+ UtilLogic.timeNameJa(timeName) + "を" + timeBefore + "から" + time + "に変更しました。");
 
 				// DELETEを実行
 				pStmt.executeUpdate();

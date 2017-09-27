@@ -10,7 +10,7 @@ import beans.SalaryBeans;
 
 public class SalaryMasterDao {
 
-	public static SalaryBeans getSalaryInfo(int id) {
+	public static SalaryBeans getSalaryInfo(String position) {
 		Connection conn = null;
 		SalaryBeans salaryInfo = new SalaryBeans();
 
@@ -20,16 +20,17 @@ public class SalaryMasterDao {
 
 
 			// SELECT文を準備
-			String sql = "select * from salary_master where id = ?";
+			String sql = "select * from salary_master where position = ?";
 			PreparedStatement pStmt = conn.prepareStatement(sql);
-			pStmt.setInt(1, id);
+			pStmt.setString(1, position);
 
 			// SELECTを実行し、結果表を取得
 			ResultSet rs = pStmt.executeQuery();
 
 			// 結果表に格納されたレコード数で繰り返し、IDの値がidであるユーザーを探す
 			while (rs.next()) {
-				salaryInfo.setId(id);
+				salaryInfo.setId(rs.getInt("id"));
+				salaryInfo.setPosition(rs.getString("position"));
 				salaryInfo.setHourlyWage(rs.getInt("hourly_wage"));
 				salaryInfo.setOvertimeHourlyWage(rs.getInt("overtime_hourly_wage"));
 			}

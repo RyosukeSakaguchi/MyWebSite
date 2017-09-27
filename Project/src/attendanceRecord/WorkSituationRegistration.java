@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import beans.UserBeans;
-import common.UtillLogic;
+import common.UtilLogic;
 import dao.DaoUtil;
 import dao.WorkSituationDao;
 
@@ -49,11 +49,13 @@ public class WorkSituationRegistration extends HttpServlet {
 			// LoginScreenへリダイレクト
 			response.sendRedirect("UserList");
 		}else {
+			boolean result1 = WorkSituationDao.isBeforeWorking(loginUser.getLoginId());
+			boolean result2 = WorkSituationDao.isWorking(loginUser.getLoginId());
+			boolean result3 = WorkSituationDao.isAfterWorking(loginUser.getLoginId());
 
-			boolean result = WorkSituationDao.isWorking(loginUser.getLoginId());
-			boolean result2 = WorkSituationDao.isGetTodayWorkTime(loginUser.getLoginId());
-			request.setAttribute("result", result);
+			request.setAttribute("result1", result1);
 			request.setAttribute("result2", result2);
+			request.setAttribute("result3", result3);
 
 			if(WorkSituationDao.isOverTime("work_start")) {
 				request.setAttribute("overStartTimeMsg", "今日の勤務開始時間がまだ入力されていません");
@@ -69,8 +71,8 @@ public class WorkSituationRegistration extends HttpServlet {
 			int year = Integer.parseInt(y.format(now));
 			int month = Integer.parseInt(m.format(now));
 
-			String titalOvertime = UtillLogic.totalOvertime(WorkSituationDao.findAll(loginUser.getLoginId(), year, month));
-			int titalOvertimeInt = UtillLogic.stringTimeToInt(titalOvertime);
+			String titalOvertime = UtilLogic.totalOvertime(WorkSituationDao.findAll(loginUser.getLoginId(), year, month));
+			int titalOvertimeInt = UtilLogic.stringTimeToInt(titalOvertime);
 
 			if(titalOvertimeInt >= 500000) {
 				request.setAttribute("confMsg", "今月の残業時間が50時間を超えています");
@@ -116,9 +118,8 @@ public class WorkSituationRegistration extends HttpServlet {
 			}else {
 				request.setAttribute("errMsg", "入力内容に誤りがあります。");
 
-				// workSituationRegistration.jspへフォワード
-				RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/workSituationRegistration.jsp");
-				dispatcher.forward(request, response);
+				doGet(request, response);
+				return;
 			}
 
 		}

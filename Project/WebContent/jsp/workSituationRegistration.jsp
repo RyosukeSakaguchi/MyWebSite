@@ -281,16 +281,17 @@
 						<div class="fh5co-center-position">
 							<h2 class="animate-box">Work Situation Registration</h2>
 							<div align="center">
-								<font size="5" color="white">${errMsg}</font>
+								<font size="5" color="red">${errMsg}</font>
 							</div><br>
 							<div align="center">
 								<font size="5" color="#99FF33">${confMsg}</font>
 							</div>
 							<p class="animate-box"></p>
 							<%
-								boolean result= (boolean)request.getAttribute("result");
+								boolean result1= (boolean)request.getAttribute("result1");
 								boolean result2= (boolean)request.getAttribute("result2");
-								if(!result){
+								boolean result3= (boolean)request.getAttribute("result3");
+								if(result1){
 							%>
 
 							<div align="center">
@@ -302,8 +303,7 @@
 								<button class="btn btn-outline" type="submit" style="color: red;"><i class="icon-play2" style="color: white;"></i> Start</button>
 							</form>
 							<%
-								}else{
-									if(!result2){
+								}else if(result2){
 							%>
 									<div align="center">
 										<br><font size="5" color="red">${overEndTimeMsg}</font>
@@ -326,14 +326,14 @@
 									</form>
 
 							<%
-									}else{
+								}else if(result3){
 							%>
 										<div align="center">
 											<br><font size="5" color="white">お疲れ様でした。</font>
 										</div>
 
 							<%
-									}
+
 								}
 							%>
 						</div>

@@ -7,7 +7,7 @@
 <%@ page import="dao.DaoUtil"%>
 <%@ page import="dao.WorkSituationDao"%>
 <%@ page import="java.util.List "%>
-<%@ page import="common.UtillLogic"%>
+<%@ page import="common.UtilLogic"%>
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -414,8 +414,8 @@
 										for (int i = 0; i < u.size(); i++) {
 											if(u.get(i).getId() != 1){
 												boolean result = WorkSituationDao.isWorking(u.get(i).getLoginId());
-												String titalOvertime = UtillLogic.totalOvertime(WorkSituationDao.findAll(u.get(i).getLoginId(), year, month));
-												int titalOvertimeInt = UtillLogic.stringTimeToInt(titalOvertime);
+												String titalOvertime = UtilLogic.totalOvertime(WorkSituationDao.findAll(u.get(i).getLoginId(), year, month));
+												int titalOvertimeInt = UtilLogic.stringTimeToInt(titalOvertime);
 									%>
 									<tr>
 										<td></td>

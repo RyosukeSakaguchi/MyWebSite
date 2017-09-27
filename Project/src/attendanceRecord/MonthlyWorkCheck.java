@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import beans.UserBeans;
 import beans.WorkSituationBeans;
-import common.UtillLogic;
+import common.UtilLogic;
 import dao.UserInfoDao;
 import dao.WorkSituationDao;
 
@@ -63,8 +63,8 @@ public class MonthlyWorkCheck extends HttpServlet {
 			request.setAttribute("workSituationList", workSituationList);
 
 
-			String titalWorkTime = UtillLogic.totalWorkTime(workSituationList);
-			String titalOvertime = UtillLogic.totalOvertime(workSituationList);
+			String titalWorkTime = UtilLogic.totalWorkTime(workSituationList);
+			String titalOvertime = UtilLogic.totalOvertime(workSituationList);
 
 			request.setAttribute("titalWorkTime",  titalWorkTime);
 			request.setAttribute("titalOvertime",  titalOvertime);
