@@ -272,7 +272,7 @@
 				<nav role="navigation">
 					<h1 id="fh5co-logo"></h1>
 					<ul class="pull-right right-menu">
-						<li class="fh5co-cta-btn"><a href="SignUp">新規登録</a></li>
+						<li class="fh5co-cta-btn"><a href="SignUp">新規登録変更</a></li>
 						<li class="fh5co-cta-btn"><a href="Logout">ログアウト</a></li>
 					</ul>
 				</nav>
