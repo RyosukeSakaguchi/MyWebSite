@@ -146,21 +146,98 @@
 			<section id="fh5co-projects">
 				<div class="container">
 					<font size="5" color="red">${noCheckMsg}</font><br><br>
+
+
+						<div class="wrapper" style="justify-content:center;">
+							<%
+								List<UserBeans> u = (List<UserBeans>) request.getAttribute("userList");
+								int pageNumber = (int)request.getAttribute("pageNumber");
+								int totalPageNumber = (int)request.getAttribute("totalPageNumber");
+								if(pageNumber != 1){
+							%>
+							<div >
+							<form action="UserList" method="get">
+								<button  role="button" type="submit" style ="color : #85919d; width : 10px ; background-color : rgb(249, 249, 249); border-style: none; "><span class="icon-angle-double-left" aria-hidden="true"></span></button>
+								<input type="hidden" name="pageNumber" value=1>
+							<%
+							for(UserBeans user : u){
+							%>
+
+							<input type="hidden" name="userIdList[]" value="<%=user.getId()%>" >
+							<%
+								}
+							%>
+							</form>
+							</div>　
+							<div >
+							<form action="UserList" method="get">
+							<button  role="button" type="submit" style ="color : #85919d; width : 10px; background-color : rgb(249, 249, 249); border-style: none;"><span class="icon-angle-left" aria-hidden="true"></span></button>
+									<input type="hidden" name="pageNumber" value="<%=pageNumber-1%>">
+							<%
+							for(UserBeans user : u){
+							%>
+							<input type="hidden" name="userIdList[]" value="<%=user.getId()%>" >
+							<%
+								}
+							%>
+								</form>
+								</div>
+							<%
+							}else{
+							%>
+							<div></div>
+							<div></div>
+							<%} %>
+							<div >
+							　 ページ${pageNumber}/${totalPageNumber} 　
+							</div>
+							<%
+								if(pageNumber != totalPageNumber){
+
+							%>
+							<div >
+							<form action="UserList" method="get">
+								<button  role="button" type="submit" style ="color : #85919d; width : 10px ;background-color : rgb(249, 249, 249); border-style: none;"><span class="icon-angle-right" aria-hidden="true"></span></button>
+									<input type="hidden" name="pageNumber" value="<%=pageNumber+1%>">
+								<%
+							for(UserBeans user : u){
+							%>
+							<input type="hidden" name="userIdList[]" value="<%=user.getId()%>" >
+							<%
+								}
+							%>
+								</form>
+								</div>　
+								<div >
+								<form action="UserList" method="get">
+								<button  role="button" type="submit" style ="color : #85919d; width : 10px; background-color : rgb(249, 249, 249); border-style: none;"><span class="icon-angle-double-right" aria-hidden="true"></span></button>
+								<input type="hidden" name="pageNumber" value="<%=totalPageNumber%>">
+							<%
+							for(UserBeans user : u){
+							%>
+							<input type="hidden" name="userIdList[]" value="<%=user.getId()%>" >
+							<%
+								}
+							%>
+								</form>
+								</div>
+							<% }else{%>
+							<div></div>
+							<div></div>
+
+							<%
+							}
+							%>
+							</div>
 					<form name="form1" action="UserDelete" method="get">
 							<input type="button" class="btn btn-primary" value="全て選択" onClick="BoxChecked(true);">
 							<input type="button" class="btn btn-warning" value="全て未選択" onClick="BoxChecked(false);" >
-							　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　
-							<button class="btn btn-danger" type="submit">選択したユーザーを削除</button><br><br>
+							　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+							<button class="btn btn-danger" type="submit">選択したユーザーを削除</button>
+							<a class="btn btn-danger" href="UserDelete?id=all">全ユーザーを削除</a>
+							<br><br>
 
 						<div class="row">
-
-							<a  role="button" style ="color : #85919d" >
-							<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-							</a>
-							5/8
-							<a  role="button" style ="color : #85919d">
-							<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-							</a>
 
 							<div class="table-responsive">
 								<table class="table table-striped">
@@ -177,19 +254,22 @@
 									</thead>
 									<tbody>
 										<%
-											List<UserBeans> u = (List<UserBeans>) request.getAttribute("userList");
-											UserBeans loginUser= (UserBeans)session.getAttribute("loginUser");
+											UserBeans loginUser = (UserBeans)session.getAttribute("loginUser");
+											int userNumberPerPage = (int)request.getAttribute("userNumberPerPage");
 											Date now = new Date();
 											SimpleDateFormat y = new SimpleDateFormat("yyyy");
 											SimpleDateFormat m = new SimpleDateFormat("MM");
 											int year = Integer.parseInt(y.format(now));
 											int month = Integer.parseInt(m.format(now));
 
-											for (int i = 0; i < u.size(); i++) {
-												if(u.get(i).getId() != 1){
-													boolean result = WorkSituationDao.isWorking(u.get(i).getLoginId());
-													String titalOvertime = UtilLogic.totalOvertime(WorkSituationDao.findAll(u.get(i).getLoginId(), year, month));
-													int titalOvertimeInt = UtilLogic.stringTimeToInt(titalOvertime);
+											for (int i = userNumberPerPage * (pageNumber - 1); i < userNumberPerPage * pageNumber ; i++) {
+												if(i == u.size()){
+													break;
+												}
+
+												boolean result = WorkSituationDao.isWorking(u.get(i).getLoginId());
+												String titalOvertime = UtilLogic.totalOvertime(WorkSituationDao.findAll(u.get(i).getLoginId(), year, month));
+												int titalOvertimeInt = UtilLogic.stringTimeToInt(titalOvertime);
 										%>
 										<tr>
 											<td></td>
@@ -220,7 +300,7 @@
 												<a class="btn btn-danger" href="UserDelete?id=<%=u.get(i).getId()%>">削除</a>
 											</td>
 										</tr>
-										<%		}
+										<%
 											}
 										%>
 									</tbody>

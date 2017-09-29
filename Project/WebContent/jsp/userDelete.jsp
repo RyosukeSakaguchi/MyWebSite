@@ -27,7 +27,7 @@
 								<font size="5">本当にログインID&nbsp;:&nbsp;<font color="red"><%=u.getLoginId()%></font>を削除してもよろしいでしょうか。</font>
 							</h2>
 							<%
-								}else{
+								}else if(request.getAttribute("userList[]") != null){
 							%>
 									<h2 class="animate-box">
 									<font size="5">本当にログインID&nbsp;:&nbsp;
@@ -43,6 +43,12 @@
 									}
 							%>
 								 を削除してもよろしいでしょうか。</font></h2>
+							<%
+								}else{
+							%>
+									<h2 class="animate-box">
+									<font size="5">本当に<font color="red">全ユーザー</font>を削除してもよろしいでしょうか。</font>
+									</h2>
 							<%
 								}
 							%>
@@ -60,7 +66,7 @@
 												%>
 												<input type="hidden" value="<%=u.getId()%>" name="id">
 												<%
-													}else{
+													}else if(request.getAttribute("userList[]") != null){
 														for(int i = 0; i < userList.length; i++){
 												%>
 												<input type="hidden" value="<%=userList[i].getId()%>" name="idList[]">

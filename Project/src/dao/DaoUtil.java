@@ -105,6 +105,11 @@ public class DaoUtil {
 		return sql;
 	}
 
+	/** 時間マスターテーブルのあるidの時間をTime型で返す
+	 * @param id
+	 * @param timeName
+	 * @return Time
+	 */
 	public static Time getTime(int id, String timeName) {
 		Connection conn = null;
 		Time time = new Time(Calendar.getInstance().getTimeInMillis());
@@ -119,6 +124,7 @@ public class DaoUtil {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 
+			// 結果表に格納されたレコードの内容をtimeに代入
 			while (rs.next()) {
 				time = rs.getTime(timeName);
 			}
@@ -156,7 +162,7 @@ public class DaoUtil {
 			ResultSet rs = pStmt.executeQuery();
 
 			// 結果表に格納されたレコードの内容を
-			// UserInfoインスタンスに設定し、Listインスタンスに追加
+			// PositionBeansインスタンスに設定し、Listインスタンスに追加
 			while (rs.next()) {
 				PositionBeans position = new PositionBeans();
 				position.setId(rs.getInt("id"));

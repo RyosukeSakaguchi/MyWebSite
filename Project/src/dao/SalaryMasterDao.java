@@ -10,6 +10,10 @@ import beans.SalaryBeans;
 
 public class SalaryMasterDao {
 
+	/** 給料マスターテーブルのpositionに対応するSalaryBeansを返す
+	 * @param position
+	 * @return SalaryBeans
+	 */
 	public static SalaryBeans getSalaryInfo(String position) {
 		Connection conn = null;
 		SalaryBeans salaryInfo = new SalaryBeans();
@@ -17,7 +21,6 @@ public class SalaryMasterDao {
 		try {
 			// データベースへ接続
 			conn = DBManager.getConnection();
-
 
 			// SELECT文を準備
 			String sql = "select * from salary_master where position = ?";
@@ -27,7 +30,8 @@ public class SalaryMasterDao {
 			// SELECTを実行し、結果表を取得
 			ResultSet rs = pStmt.executeQuery();
 
-			// 結果表に格納されたレコード数で繰り返し、IDの値がidであるユーザーを探す
+			// 結果表に格納されたレコードの内容を
+			// SalaryBeansインスタンスに設定し、SalaryBeansインスタンスに追加
 			while (rs.next()) {
 				salaryInfo.setId(rs.getInt("id"));
 				salaryInfo.setPosition(rs.getString("position"));
@@ -49,7 +53,5 @@ public class SalaryMasterDao {
 			}
 		}
 		return salaryInfo ;
-
 	}
-
 }

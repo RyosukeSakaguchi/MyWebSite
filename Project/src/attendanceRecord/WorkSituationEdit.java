@@ -101,6 +101,15 @@ public class WorkSituationEdit extends HttpServlet {
 		String workStartBefore = request.getParameter("workStartBefore");
 		String workEndBefore = request.getParameter("workEndBefore");
 		String breakTimeBefore = request.getParameter("breakTimeBefore");
+		if(workStart.length() == 5) {
+			workStart = workStart + ":00";
+		}
+		if(workEnd.length() == 5) {
+			workEnd = workEnd + ":00";
+		}
+		if(breakTime.length() == 5) {
+			breakTime = breakTime + ":00";
+		}
 
 		boolean result = WorkSituationDao.workSituationEdit(workSituationId, workStart, workEnd, breakTime);
 

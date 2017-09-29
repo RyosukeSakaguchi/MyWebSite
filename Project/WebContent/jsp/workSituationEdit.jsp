@@ -73,16 +73,17 @@
 													<input type="hidden" value="<%=workSituation.getId()%>" name="workSituationId" onblur="isEmpty(this)" >
 												</td>
 												<td >
-													<input type="time" value="<%=workSituation.getWorkStart()%>" class="form-control" id="inputName" name="workStart" onblur="isEmpty(this)" style="background: white; height: 35px; width: 150px; margin:auto;">
-													<input type="hidden" value="<%=workSituation.getWorkStart()%>" name="workStartBefore" onblur="isEmpty(this)" >
+													<input type="time" step="1" value="<%=workSituation.getWorkStart()%>" class="form-control" id="inputName" name="workStart"  style="background: white; height: 35px; width: 150px; margin:auto;">
+													<input type="hidden" value="<%=workSituation.getWorkStart()%>" name="workStartBefore"  >
 												</td>
 												<td >
-													<input type="time" value="<%=workSituation.getWorkEnd()%>" class="form-control" id="inputName" name="workEnd" onblur="isEmpty(this)" style="background: white; height: 35px; width: 150px; margin:auto;">
-													<input type="hidden" value="<%=workSituation.getWorkEnd()%>" name="workEndBefore" onblur="isEmpty(this)" >
+													<input type="time" step="1" value="<%=workSituation.getWorkEnd()%>" class="form-control" id="inputName" name="workEnd"  style="background: white; height: 35px; width: 150px; margin:auto;">
+													<input type="hidden" value="<%=workSituation.getWorkEnd()%>" name="workEndBefore"  >
+													<%System.out.println(workSituation.getWorkEnd()); %>
 												</td>
 												<td >
-													<input type="time" value="<%=workSituation.getBreakTime()%>" class="form-control" id="inputName" name="breakTime" onblur="isEmpty(this)" style="background: white; height: 35px; width: 130px; margin:auto;">
-													<input type="hidden" value="<%=workSituation.getBreakTime()%>" name="breakTimeBefore" onblur="isEmpty(this)" >
+													<input type="time" step="1" value="<%=workSituation.getBreakTime()%>" class="form-control" id="inputName" name="breakTime" style="background: white; height: 35px; width: 150px; margin:auto;">
+													<input type="hidden" value="<%=workSituation.getBreakTime()%>" name="breakTimeBefore" >
 												</td>
 												<td style="text-align: center;">
 													<%=workSituation.getWorkTime()%>

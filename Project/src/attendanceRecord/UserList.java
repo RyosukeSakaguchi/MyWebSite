@@ -1,6 +1,7 @@
 package attendanceRecord;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -46,11 +47,32 @@ public class UserList extends HttpServlet {
 			// LoginScreenへリダイレクト
 			response.sendRedirect("WorkSituationRegistration");
 		}else {
-			// userテーブルにある全てのユーザーを取り出す
-			List<UserBeans> userList = dao.UserInfoDao.findAll();
-			userList = UtilLogic.userListSort(userList);
-			request.setAttribute("userList", userList);
+			int userNumberPerPage = 5;
+			if(request.getParameter("pageNumber") != null) {
+				List<UserBeans> userList = new ArrayList<UserBeans>();;
+				int pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
+				String userIdList[] = request.getParameterValues("userIdList[]");
+				for(int i = 0; i < userIdList.length; i++) {
+					UserBeans userInfo = UserInfoDao.findAll(Integer.parseInt(userIdList[i]));
+					userList.add(userInfo);
+				}
+				int totalPageNumber = UtilLogic.getTotalPageNumber(userList, userNumberPerPage);
+				request.setAttribute("userNumberPerPage", userNumberPerPage);
+				request.setAttribute("totalPageNumber", totalPageNumber);
+				request.setAttribute("pageNumber", pageNumber);
+				request.setAttribute("userList", userList);
+			}else {
+				// userテーブルにある全てのユーザーを取り出す
+				List<UserBeans> userList = UserInfoDao.findAll();
+				userList = UtilLogic.userListSort(userList);
+				int totalPageNumber = UtilLogic.getTotalPageNumber(userList, userNumberPerPage);
+				int pageNumber = 1;
+				request.setAttribute("userNumberPerPage", userNumberPerPage);
+				request.setAttribute("totalPageNumber", totalPageNumber);
+				request.setAttribute("pageNumber", pageNumber);
+				request.setAttribute("userList", userList);
 
+		}
 			// userList.jspへフォワード
 			RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/userList.jsp");
 			dispatcher.forward(request, response);
@@ -80,8 +102,16 @@ public class UserList extends HttpServlet {
 				request.getParameter("workSituation")
 			);
 
+			int userNumberPerPage = 5;
+			int totalPageNumber = UtilLogic.getTotalPageNumber(userList, userNumberPerPage);
+			int pageNumber = 1;
+
+
 			// リクエストパラメータを保存
 			request.setAttribute("userList", userList);
+			request.setAttribute("userNumberPerPage", userNumberPerPage);
+			request.setAttribute("totalPageNumber", totalPageNumber);
+			request.setAttribute("pageNumber", pageNumber);
 			request.setAttribute("login_id", request.getParameter("login_id"));
 			request.setAttribute("name", request.getParameter("name"));
 			request.setAttribute("position", request.getParameter("position"));

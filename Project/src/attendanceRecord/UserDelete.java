@@ -42,7 +42,7 @@ public class UserDelete extends HttpServlet {
 		if ((UserBeans) session.getAttribute("loginUser") == null) {
 			// LoginScreenへリダイレクト
 			response.sendRedirect("LoginScreen");
-		} else if (request.getParameter("id") == null) {
+		}else if (request.getParameter("id") == null) {
 			String delListId[] = request.getParameterValues("delListId[]");
 			if (delListId == null) {
 				// チェックをつけていないメッセージをリクエストスコープに保存
@@ -69,6 +69,11 @@ public class UserDelete extends HttpServlet {
 				dispatcher.forward(request, response);
 				return;
 			}
+		}else if (request.getParameter("id").equals("all")) {
+				// userDelete.jspへフォワード
+				RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/userDelete.jsp");
+				dispatcher.forward(request, response);
+				return;
 		} else {
 			// リクエストパラメータの取得
 			int id = Integer.parseInt(request.getParameter("id"));
@@ -100,6 +105,7 @@ public class UserDelete extends HttpServlet {
 
 		// リクエストスコープにパラメーターがあるかで分岐
 		if (id == null) {
+			if(request.getParameterValues("idList[]") != null) {
 			String idList[] = request.getParameterValues("idList[]");
 			for (int i = 0; i < idList.length; i++) {
 				UserBeans userInfo = new UserBeans();
@@ -107,10 +113,19 @@ public class UserDelete extends HttpServlet {
 				WorkSituationDao.userSituDel(userInfo.getLoginId());
 				WorkSituationEditDao.userSituEditDel(userInfo.getLoginId());
 				UserInfoDao.userDel(idList[i]);
+				// ユーザー消去成功のメッセージをリクエストスコープに保存
+				request.setAttribute("sucMsg", "ユーザー情報の削除に成功しました");
+
+			}
+			}else {
+				WorkSituationDao.allUserSituDel();
+				WorkSituationEditDao.allUserSituEditDel();
+				UserInfoDao.allUserDel();
+				// ユーザー消去成功のメッセージをリクエストスコープに保存
+				request.setAttribute("sucMsg", "全ユーザー情報の削除に成功しました");
+
 			}
 
-			// ユーザー消去成功のメッセージをリクエストスコープに保存
-			request.setAttribute("sucMsg", "ユーザー情報の削除に成功しました");
 
 			// UserListのdoGetメソッドを実行
 			UserList userList = new UserList();
