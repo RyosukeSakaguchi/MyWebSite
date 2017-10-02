@@ -35,6 +35,7 @@ public class DailyWorkCheck extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		 // HttpSessionインスタンスの取得
 		HttpSession session = request.getSession();
 
 		// セッションにログイン情報があるかないかで分岐
@@ -48,22 +49,24 @@ public class DailyWorkCheck extends HttpServlet {
 			int month = Integer.parseInt(request.getParameter("month"));
 			int date = Integer.parseInt(request.getParameter("date"));
 
+			// パラメータidに対応するUserBeans型のuserInfoインスタンスとユーザーの名前をリクエストスコープに保存
 			UserBeans userInfo = new UserBeans();
 			userInfo = UserInfoDao.findAll(id);
 			request.setAttribute("userInfo", userInfo);
 			request.setAttribute("name", userInfo.getName());
 
+			// 勤務状況のリストを取得し、workSituationListインスタンスをリクエストスコープに保存
 			String loginId = userInfo.getLoginId();
-
 			List<WorkSituationBeans> workSituationList = new ArrayList<WorkSituationBeans>();
 			workSituationList = WorkSituationDao.findAll(loginId, year, month, date);
 			request.setAttribute("workSituationList", workSituationList);
 
+			// リクエストスコープに保存
 			request.setAttribute("year", year);
 			request.setAttribute("month", month);
 			request.setAttribute("date", date);
 
-			// monthlyWorkCheck.jspへフォワード
+			// dailyWorkCheck.jspへフォワード
 			RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/dailyWorkCheck.jsp");
 			dispatcher.forward(request, response);
 		}

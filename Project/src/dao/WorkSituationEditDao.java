@@ -5,7 +5,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,7 +15,9 @@ import common.UtilLogic;
 
 public class WorkSituationEditDao {
 
-	/** ログインIDを受け取り、そのユーザーに関する勤務状況編集履歴のリストを受け取る
+	/**
+	 * ログインIDを受け取り、そのユーザーに関する勤務状況編集履歴のリストを受け取る
+	 *
 	 * @param loginId
 	 * @return List<WorkSituationEditBeans>
 	 */
@@ -29,11 +30,14 @@ public class WorkSituationEditDao {
 			conn = DBManager.getConnection();
 
 			// SELECT文を準備
-			String sql = "SELECT * FROM work_situation_edit where login_id='" + loginId + "'";
+			String sql = "SELECT * FROM work_situation_edit where login_id= ? ORDER BY id DESC";
 
 			// SELECTを実行し、結果表を取得
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
+			PreparedStatement pStmt = conn.prepareStatement(sql);
+			pStmt.setString(1, loginId);
+
+			// SELECTを実行し、結果表（ResultSet）を取得
+			ResultSet rs = pStmt.executeQuery();
 
 			// 結果表に格納されたレコードの内容を
 			// WorkSituationEditBeansインスタンスに設定し、Listインスタンスに追加
@@ -62,7 +66,9 @@ public class WorkSituationEditDao {
 		return workSituationEditList;
 	}
 
-	/** ログインIDと削除した履歴の年と月を受け取り、勤務状況編集履歴テーブルに挿入
+	/**
+	 * ログインIDと削除した履歴の年と月を受け取り、勤務状況編集履歴テーブルに挿入
+	 *
 	 * @param loginId
 	 * @param createDateYear
 	 * @param createDateMonth
@@ -70,7 +76,7 @@ public class WorkSituationEditDao {
 	public static void setEditHistory(String loginId, int createDateYear, int createDateMonth) {
 		Connection conn = null;
 
-		//今日の日付と時間を"yyy-MM-dd HH:mm:ss"の形でtodayStringに代入
+		// 今日の日付と時間を"yyy-MM-dd HH:mm:ss"の形でtodayStringに代入
 		Date today = new Date(System.currentTimeMillis());
 		SimpleDateFormat d = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
 		String todayString = d.format(today);
@@ -103,7 +109,9 @@ public class WorkSituationEditDao {
 
 	}
 
-	/** ログインIDと削除した履歴の年と月と日を受け取り、勤務状況編集履歴テーブルに挿入
+	/**
+	 * ログインIDと削除した履歴の年と月と日を受け取り、勤務状況編集履歴テーブルに挿入
+	 *
 	 * @param loginId
 	 * @param createDateYear
 	 * @param createDateMonth
@@ -112,7 +120,7 @@ public class WorkSituationEditDao {
 	public static void setEditHistory(String loginId, int createDateYear, int createDateMonth, int createDateDate) {
 		Connection conn = null;
 
-		//今日の日付と時間を"yyy-MM-dd HH:mm:ss"の形でtodayStringに代入
+		// 今日の日付と時間を"yyy-MM-dd HH:mm:ss"の形でtodayStringに代入
 		Date today = new Date(System.currentTimeMillis());
 		SimpleDateFormat d = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
 		String todayString = d.format(today);
@@ -145,7 +153,9 @@ public class WorkSituationEditDao {
 
 	}
 
-	/** ログインIDを受け取り、編集履歴を勤務状況編集履歴テーブルに挿入
+	/**
+	 * ログインIDを受け取り、編集履歴を勤務状況編集履歴テーブルに挿入
+	 *
 	 * @param loginId
 	 * @param time
 	 * @param timeBefore
@@ -158,10 +168,10 @@ public class WorkSituationEditDao {
 			int createDateMonth, int createDateDate, String timeName) {
 		Connection conn = null;
 
-		//テーブルへの挿入は時間を変更した時のみ行う
+		// テーブルへの挿入は時間を変更した時のみ行う
 		if (!time.equals(timeBefore)) {
 
-			//今日の日付と時間を"yyy-MM-dd HH:mm:ss"の形でtodayStringに代入
+			// 今日の日付と時間を"yyy-MM-dd HH:mm:ss"の形でtodayStringに代入
 			Date today = new Date(System.currentTimeMillis());
 			SimpleDateFormat d = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
 			String todayString = d.format(today);
@@ -195,7 +205,9 @@ public class WorkSituationEditDao {
 		}
 	}
 
-	/** ログインIDを受け取り、対応する勤務状況編集履歴を消去する
+	/**
+	 * ログインIDを受け取り、対応する勤務状況編集履歴を消去する
+	 *
 	 * @param loginId
 	 */
 	/**
@@ -230,7 +242,8 @@ public class WorkSituationEditDao {
 
 	}
 
-	/**全てのユーザーの勤務状況編集履歴を消去する
+	/**
+	 * 全てのユーザーの勤務状況編集履歴を消去する
 	 *
 	 */
 	public static void allUserSituEditDel() {

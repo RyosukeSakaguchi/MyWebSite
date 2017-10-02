@@ -23,9 +23,6 @@
 				<div class="container">
 					<nav role="navigation">
 						<ul class="pull-left left-menu">
-							<%
-								UserBeans loginUser= (UserBeans)session.getAttribute("loginUser");
-							%>
 							<li class="fh5co-cta-btn">
 								<c:choose>
 									<c:when test="${loginUser.getId() == 1}"><a href="UserList">戻る</a></c:when>
@@ -47,60 +44,52 @@
 									<h2 class="animate-box">User Update</h2>
 									<h2 class="animate-box"><font size="5" color="white">${errMsg}</font></h2>
 								</div>
-								<%
-									UserBeans u = (UserBeans) request.getAttribute("userInfo");
-								%>
 								<div class="fh5co-right-position">
 									<form action="/AttendanceRecord/UserUpdate" method="post">
 										<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">ログインID</label>
-										<div class="col-sm-3"><%=u.getLoginId()%></div><br><br>
+										<div class="col-sm-3">${userInfo.getLoginId()}</div><br><br>
 										<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">ユーザー名</label>
 										<div class="col-sm-3">
-											<input type="text" class="form-control" id="inputName" value="<%=u.getName()%>" name="name" onblur="isEmpty(this)" style="background: white; height: 35px; width: 200px;">
+											<input type="text" class="form-control" id="inputName" value="${userInfo.getName()}" name="name"
+											onblur="isEmpty(this)" style="background: white; height: 35px; width: 200px;">
 										</div>
 										<br><br>
 										<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">パスワード</label>
 										<div class="col-sm-3">
-											<input type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="8文字以上で1文字以上の数字、小文字アルファベット、大文字アルファベットがそれぞれ含まれていること" class="form-control" id="inputName" name="password" onblur="isEmpty(this)" style="background: white; height: 35px; width: 200px;">
+											<input type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+											 title="8文字以上で1文字以上の数字、小文字アルファベット、大文字アルファベットがそれぞれ含まれていること"
+											 class="form-control" id="inputName" name="password" onblur="isEmpty(this)" style="background: white; height: 35px; width: 200px;">
 										</div>
 										<br><br>
 										<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">パスワード(確認)</label>
 										<div class="col-sm-3">
-											<input type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="8文字以上で1文字以上の数字、小文字アルファベット、大文字アルファベットがそれぞれ含まれていること" class="form-control" id="inputName" name="passwordConf" onblur="isEmpty(this)" style="background: white; height: 35px; width: 200px;">
+											<input type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+											title="8文字以上で1文字以上の数字、小文字アルファベット、大文字アルファベットがそれぞれ含まれていること"
+											class="form-control" id="inputName" name="passwordConf" onblur="isEmpty(this)" style="background: white; height: 35px; width: 200px;">
 										</div>
 										<br><br>
 										<label for="inputName" class="col-sm-2 control-label" style="width: 200px;"> 役職</label>
 										<div class="col-sm-3">
 											<select class="form-control" id="inputName" name="position"  style="background: white; height: 35px; width: 200px;">
-												<%
-													List<PositionBeans> positonList = DaoUtil.findAllPosition();
-													for(PositionBeans p : positonList){
-														if(p.getPosition().equals(u.getPosition())){
-												%>
-
-													<option value="<%=p.getPosition()%>" selected ><%=p.getPosition()%></option>
-
-												<%
-														}else{
-
-												%>
-
-												<option value="<%=p.getPosition()%>"><%=p.getPosition()%></option>
-
-												<%
-														}
-													}
-
-												%>
+												<c:forEach var="obj" items="${positonList}">
+													<c:choose>
+														<c:when test="${obj.getPosition().equals(userInfo.getPosition())}">
+															<option value="${obj.getPosition()}" selected >${obj.getPosition()}</option>
+														</c:when>
+														<c:otherwise>
+															<option value="${obj.getPosition()}">${obj.getPosition()}</option>
+														</c:otherwise>
+													</c:choose>
+												</c:forEach>
 											</select>
 										</div>
 										<br><br>
 										<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">誕生日</label>
 										<div class="col-sm-3">
-											<input type="date" class="form-control" id="inputName" name="birthDate" onblur="isEmpty(this)" value="<%=u.getBirthDate()%>" style="background: white; height: 35px; width: 200px;">
+											<input type="date" class="form-control" id="inputName" name="birthDate" onblur="isEmpty(this)" value="${userInfo.getBirthDate()}" style="background: white; height: 35px; width: 200px;">
 										</div>
 										<br> <br> <br>
-										<input type="hidden" value="<%=u.getId()%>" name="id">
+										<input type="hidden" value="${userInfo.getId()}" name="id">
 										<div class="button_wrapper">
 											<button class="btn btn-info" type="submit">登録</button>
 										</div>

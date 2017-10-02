@@ -51,24 +51,26 @@ public class MonthlyWorkCheck extends HttpServlet {
 			int year = Integer.parseInt(request.getParameter("year"));
 			int month = Integer.parseInt(request.getParameter("month"));
 
+			// パラメータidに対応するUserBeans型のuserInfoインスタンスとユーザーの名前をリクエストスコープに保存
 			UserBeans userInfo = new UserBeans();
 			userInfo = UserInfoDao.findAll(id);
 			request.setAttribute("userInfo", userInfo);
 			request.setAttribute("name", userInfo.getName());
 
+			// 勤務状況のリストを取得し、workSituationListインスタンスをリクエストスコープに保存
 			String loginId = userInfo.getLoginId();
-
 			List<WorkSituationBeans> workSituationList = new ArrayList<WorkSituationBeans>();
 			workSituationList = WorkSituationDao.findAll(loginId, year, month);
 			request.setAttribute("workSituationList", workSituationList);
 
-
+			// ユーザーの総勤務時間と総残業時間を取得し、リクエストスコープに保存
 			String titalWorkTime = UtilLogic.totalWorkTime(workSituationList);
 			String titalOvertime = UtilLogic.totalOvertime(workSituationList);
-
 			request.setAttribute("titalWorkTime",  titalWorkTime);
 			request.setAttribute("titalOvertime",  titalOvertime);
 
+
+			//リクエストスコープにパラメータを保存
 			request.setAttribute("year", year);
 			request.setAttribute("month", month);
 

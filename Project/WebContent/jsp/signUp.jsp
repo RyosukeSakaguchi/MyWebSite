@@ -68,11 +68,6 @@
 											<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">役職</label>
 											<div class="col-sm-3">
 												<select class="form-control" name="position" style="background: white; height: 35px; width: 200px;">
-													<%
-														List<PositionBeans> positonList = DaoUtil.findAllPosition();
-														String position = (String)request.getAttribute("position");
-														request.setAttribute("positonList",positonList);
-													%>
 													<c:choose>
 														<c:when test="${position == null}">
 															<c:forEach var="obj" items="${positonList}">
@@ -80,25 +75,16 @@
 															</c:forEach>
 														</c:when>
 														<c:otherwise>
-															<%
-															 for(PositionBeans p : positonList){
-																 if(p.getPosition().equals(position)){
-															%>
-
-															<option value="<%=p.getPosition()%>" selected ><%=p.getPosition()%></option>
-
-															<%
-																 }else{
-
-															%>
-
-															<option value="<%=p.getPosition()%>"><%=p.getPosition()%></option>
-
-															<%
-																 }
-															 }
-
-															%>
+															<c:forEach var="obj" items="${positonList}" >
+																<c:choose>
+																	<c:when test="${obj.getPosition().equals(position)}">
+																		<option value="${obj.getPosition()}" selected >${obj.getPosition()}</option>
+																	</c:when>
+																	<c:otherwise>
+																		<option value="${obj.getPosition()}">${obj.getPosition()}</option>
+																	</c:otherwise>
+																</c:choose>
+															</c:forEach>
 														</c:otherwise>
 													</c:choose>
 												</select>
@@ -120,7 +106,6 @@
 					</div>
 				</div>
 			</section>
-
 		</div>
 
 		<!-- 共通footer.jsp読み込み-->

@@ -49,8 +49,8 @@ public class WorkSituationEditHistory extends HttpServlet {
 			int id = Integer.parseInt(request.getParameter("id"));
 			String disp = request.getParameter("disp");
 
+			// 5件表示なのか20件表示なのかはresultで区別し、resultをリクエストパラメータに保存
 			boolean result = true;
-
 			if(disp == null) {
 				result = false;
 				request.setAttribute("dispMsg", "(最新5件)");
@@ -59,13 +59,14 @@ public class WorkSituationEditHistory extends HttpServlet {
 			}
 			request.setAttribute("result", result);
 
+			// パラメータidに対応するUserBeans型のuserInfoインスタンスとユーザーの名前をリクエストスコープに保存
 			UserBeans userInfo = new UserBeans();
 			userInfo = UserInfoDao.findAll(id);
 			request.setAttribute("userInfo", userInfo);
 			request.setAttribute("name", userInfo.getName());
 
+			// 勤務状況のリストを取得し、workSituationListインスタンスをリクエストスコープに保存
 			String loginId = userInfo.getLoginId();
-
 			List<WorkSituationEditBeans> workSituationEditList = new ArrayList<WorkSituationEditBeans>();
 			workSituationEditList = WorkSituationEditDao.findAll(loginId);
 			request.setAttribute("workSituationEditList", workSituationEditList);

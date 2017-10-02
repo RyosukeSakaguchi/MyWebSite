@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="beans.UserBeans"%>
 <%@ page import="beans.WorkSituationBeans"%>
 <%@ page import="java.util.List"%>
@@ -24,44 +25,29 @@
 							<h2 class="animate-box">
 								<font size="5">${confMsg1}<font color="red">${confMsg2}</font>${confMsg3}</font>
 							</h2><br><br>
-							<%
-								List<WorkSituationBeans> workSituationList = (List<WorkSituationBeans>) request.getAttribute("workSituationList");
-								UserBeans userInfo = (UserBeans) request.getAttribute("userInfo");
-								int id = (int)request.getAttribute("id");
-								int year = (int)request.getAttribute("year");
-								int month = (int)request.getAttribute("month");
-								int date = (int)request.getAttribute("date");
-							%>
 							<p class="animate-box">
 							<div class="wrapper">
 								<div>
-								<%
-								if(request.getAttribute("date") == null){
-								%>
-									<a href="MonthlyWorkCheck?id=<%=userInfo.getId()%>&year=<%=year%>&month=<%=month%>" class="btn btn-outline "><i class="icon-play2"></i> Cancel</a>
-								<%
-								}else{
-								%>
-									<a href="DailyWorkCheck?id=<%=userInfo.getId()%>&year=<%=year%>&month=<%=month%>&date=<%=date%>" class="btn btn-outline "><i class="icon-play2"></i> Cancel</a>
-								<%
-								}
-								%>
+									<c:choose>
+										<c:when test="${date == null}">
+											<a href="MonthlyWorkCheck?id=${userInfo.getId()}&year=${year}&month=${month}" class="btn btn-outline "><i class="icon-play2"></i> Cancel</a>
+										</c:when>
+										<c:otherwise>
+											<a href="DailyWorkCheck?id=${userInfo.getId()}&year=${year}&month=${month}&date=${date}" class="btn btn-outline "><i class="icon-play2"></i> Cancel</a>
+										</c:otherwise>
+									</c:choose>
 								</div>
 								<div>
-								<form action="WorkSituationDelete" method="post">
-									<input type="hidden" name="id" value="<%=userInfo.getId()%>" >
-									<input type="hidden" name="year" value="<%=year%>" >
-									<input type="hidden" name="month" value="<%=month%>" >
-									<input type="hidden" name="date" value="<%=date%>" >
-									<%
-									for(WorkSituationBeans workSituation : workSituationList){
-									%>
-									<input type="hidden" name="workSituationIdList[]" value="<%=workSituation.getId()%>" >
-									<%
-									}
-									%>
-									<button class="btn btn-outline"><i class="icon-play2"></i> OK</button>
-								</form>
+									<form action="WorkSituationDelete" method="post">
+										<input type="hidden" name="id" value="${userInfo.getId()}" >
+										<input type="hidden" name="year" value="${year}" >
+										<input type="hidden" name="month" value="${month}" >
+										<input type="hidden" name="date" value="${date}" >
+										<c:forEach var="obj" items="${workSituationList}">
+											<input type="hidden" name="workSituationIdList[]" value="${obj.getId()}" >
+										</c:forEach>
+										<button class="btn btn-outline"><i class="icon-play2"></i> OK</button>
+									</form>
 								</div>
 							</div>
 							</p>

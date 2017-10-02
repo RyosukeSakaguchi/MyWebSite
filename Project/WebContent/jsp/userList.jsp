@@ -67,8 +67,7 @@
 													<%
 														String position = (String)request.getAttribute("position");
 														String workSituation = (String)request.getAttribute("workSituation");
-														List<PositionBeans> positonList = DaoUtil.findAllPosition();
-														request.setAttribute("positonList",positonList);
+
 													%>
 													<c:choose>
 														<c:when test="${position == null}">
@@ -79,25 +78,16 @@
 														</c:when>
 														<c:otherwise>
 															<option value="" ></option>
-															<%
-															 for(PositionBeans p : positonList){
-																 if(p.getPosition().equals(position)){
-															%>
-
-															<option value="<%=p.getPosition()%>" selected ><%=p.getPosition()%></option>
-
-															<%
-																 }else{
-
-															%>
-
-															<option value="<%=p.getPosition()%>"><%=p.getPosition()%></option>
-
-															<%
-																 }
-															 }
-
-															%>
+															<c:forEach var="obj" items="positonList">
+															<c:choose>
+															<c:when test="${obj.getPosition().equals(position)}">
+															<option value="${obj.getPosition()}" selected >${obj.getPosition()}</option>
+															</c:when>
+															<c:otherwise>
+															<option value="${obj.getPosition()}" >${obj.getPosition()}</option>
+															</c:otherwise>
+															</c:choose>
+															</c:forEach>
 														</c:otherwise>
 													</c:choose>
 												</select>
@@ -117,6 +107,8 @@
 											<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">勤務状況</label>
 											<div class="col-sm-3">
 												<select class="form-control" name="workSituation" style="background: white; height: 35px; width: 200px;">
+												<c:choose>
+												</c:choose>
 												<%if(workSituation == null){ %>
 													<option value=""  selected></option>
 													<option value="勤務中">勤務中</option>
@@ -147,87 +139,78 @@
 				<div class="container">
 					<font size="5" color="red">${noCheckMsg}</font><br><br>
 
-
 						<div class="wrapper" style="justify-content:center;">
 							<%
+
 								List<UserBeans> u = (List<UserBeans>) request.getAttribute("userList");
 								int pageNumber = (int)request.getAttribute("pageNumber");
 								int totalPageNumber = (int)request.getAttribute("totalPageNumber");
-								if(pageNumber != 1){
 							%>
-							<div >
-							<form action="UserList" method="get">
-								<button  role="button" type="submit" style ="color : #85919d; width : 10px ; background-color : rgb(249, 249, 249); border-style: none; "><span class="icon-angle-double-left" aria-hidden="true"></span></button>
-								<input type="hidden" name="pageNumber" value=1>
-							<%
-							for(UserBeans user : u){
-							%>
-
-							<input type="hidden" name="userIdList[]" value="<%=user.getId()%>" >
-							<%
-								}
-							%>
-							</form>
-							</div>　
-							<div >
-							<form action="UserList" method="get">
-							<button  role="button" type="submit" style ="color : #85919d; width : 10px; background-color : rgb(249, 249, 249); border-style: none;"><span class="icon-angle-left" aria-hidden="true"></span></button>
-									<input type="hidden" name="pageNumber" value="<%=pageNumber-1%>">
-							<%
-							for(UserBeans user : u){
-							%>
-							<input type="hidden" name="userIdList[]" value="<%=user.getId()%>" >
-							<%
-								}
-							%>
-								</form>
-								</div>
-							<%
-							}else{
-							%>
-							<div></div>
-							<div></div>
-							<%} %>
+							<c:choose>
+								<c:when test="${pageNumber != 1}">
+									<div >
+										<form action="UserList" method="get">
+											<button  role="button" type="submit" style ="color : #85919d; width : 10px ; background-color : rgb(249, 249, 249); border-style: none; "><span class="icon-angle-double-left" aria-hidden="true"></span></button>
+											<input type="hidden" name="pageNumber" value=1>
+											<c:forEach var="obj" items="${userList}">
+												<input type="hidden" name="userIdList[]" value="${user.getId()}" >
+											</c:forEach>
+										</form>
+									</div>
+									<div >
+										<form action="UserList" method="get">
+											<button  role="button" type="submit" style ="color : #85919d; width : 10px; background-color : rgb(249, 249, 249); border-style: none;"><span class="icon-angle-left" aria-hidden="true"></span></button>
+											<input type="hidden" name="pageNumber" value="${pageNumber-1}">
+											<c:forEach var="obj" items="${userList}">
+												<input type="hidden" name="userIdList[]" value="${user.getId()}" >
+											</c:forEach>
+										</form>
+									</div>
+								</c:when>
+								<c:otherwise>
+									<div></div>
+									<div></div>
+								</c:otherwise>
+							</c:choose>
 							<div >
 							　 ページ${pageNumber}/${totalPageNumber} 　
 							</div>
-							<%
-								if(pageNumber != totalPageNumber){
-
-							%>
-							<div >
-							<form action="UserList" method="get">
-								<button  role="button" type="submit" style ="color : #85919d; width : 10px ;background-color : rgb(249, 249, 249); border-style: none;"><span class="icon-angle-right" aria-hidden="true"></span></button>
-									<input type="hidden" name="pageNumber" value="<%=pageNumber+1%>">
+							<c:choose>
+								<c:when test="${pageNumber != totalPageNumber}">
+									<div >
+										<form action="UserList" method="get">
+											<button  role="button" type="submit" style ="color : #85919d; width : 10px ;background-color : rgb(249, 249, 249); border-style: none;"><span class="icon-angle-right" aria-hidden="true"></span></button>
+											<input type="hidden" name="pageNumber" value="<%=pageNumber+1%>">
+										<%
+									for(UserBeans user : u){
+									%>
+									<input type="hidden" name="userIdList[]" value="<%=user.getId()%>" >
+									<%
+										}
+									%>
+										</form>
+									</div>　
+									<div >
+									<form action="UserList" method="get">
+									<button  role="button" type="submit" style ="color : #85919d; width : 10px; background-color : rgb(249, 249, 249); border-style: none;"><span class="icon-angle-double-right" aria-hidden="true"></span></button>
+									<input type="hidden" name="pageNumber" value="<%=totalPageNumber%>">
 								<%
-							for(UserBeans user : u){
-							%>
-							<input type="hidden" name="userIdList[]" value="<%=user.getId()%>" >
-							<%
-								}
-							%>
-								</form>
-								</div>　
-								<div >
-								<form action="UserList" method="get">
-								<button  role="button" type="submit" style ="color : #85919d; width : 10px; background-color : rgb(249, 249, 249); border-style: none;"><span class="icon-angle-double-right" aria-hidden="true"></span></button>
-								<input type="hidden" name="pageNumber" value="<%=totalPageNumber%>">
-							<%
-							for(UserBeans user : u){
-							%>
-							<input type="hidden" name="userIdList[]" value="<%=user.getId()%>" >
-							<%
-								}
-							%>
-								</form>
-								</div>
-							<% }else{%>
+								for(UserBeans user : u){
+								%>
+								<input type="hidden" name="userIdList[]" value="<%=user.getId()%>" >
+								<%
+									}
+								%>
+									</form>
+									</div>
+								</c:when>
+							<c:otherwise>
 							<div></div>
 							<div></div>
+							</c:otherwise>
+							</c:choose>
 
-							<%
-							}
-							%>
+
 							</div>
 					<form name="form1" action="UserDelete" method="get">
 							<input type="button" class="btn btn-primary" value="全て選択" onClick="BoxChecked(true);">

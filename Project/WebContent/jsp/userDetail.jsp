@@ -23,18 +23,13 @@
 				<div class="container">
 					<nav role="navigation">
 						<ul class="pull-left left-menu">
-							<%
-								UserBeans loginUser= (UserBeans)session.getAttribute("loginUser");
-								UserBeans u = (UserBeans) request.getAttribute("userInfo");
-							%>
 							<li class="fh5co-cta-btn">
 								<c:choose>
 									<c:when test="${loginUser.getId() == 1}"><a href="UserList">戻る</a></c:when>
 									<c:otherwise><a href="WorkSituationRegistration">戻る</a></c:otherwise>
 								</c:choose>
-								　　<a href="UserUpdate?id=<%=u.getId()%>">更新</a>
+								　　<a href="UserUpdate?id=${userInfo.getId()}">更新</a>
 							</li>
-
 						</ul>
 					</nav>
 				</div>
@@ -49,12 +44,12 @@
 									<h2 class="animate-box">User Detail</h2>
 								</div>
 								<div class="animate-box" style="color:white">
-									ログイン : <%=u.getLoginId()%> <br>
-									<br> 名前 : <%=u.getName()%> <br>
-									<br> 役職 : <%=u.getPosition()%> <br>
-									<br> 生年月日 : <%=u.getFormatBirthDate()%> <br>
-									<br> 登録日時 : <%=u.getFormatCreateDate()%> <br>
-									<br> 更新日時 : <%=u.getFormatUpdateDate()%> <br>
+									ログイン : ${userInfo.getLoginId()}<br>
+									<br> 名前 : ${userInfo.getName()}<br>
+									<br> 役職 : ${userInfo.getPosition()}<br>
+									<br> 生年月日 : ${userInfo.getFormatBirthDate()}<br>
+									<br> 登録日時 : ${userInfo.getFormatCreateDate()}<br>
+									<br> 更新日時 : ${userInfo.getFormatUpdateDate()}<br>
 									<br>
 								</div>
 							</div>
@@ -65,7 +60,7 @@
 			<section id="fh5co-features">
 				<div class="container">
 					<form name="form1" action="WorkSituationEditHistory" method="get">
-					<input type="hidden" name="id" value="<%=u.getId()%>">
+					<input type="hidden" name="id" value="${userInfo.getId()}">
 					<div class="button_wrapper" style="text-align:left;">
 						<button class="btn btn-default" style="border: 2px solid black;">勤務状況編集履歴</button>
 					</div>
@@ -76,7 +71,7 @@
 					<div class="custom-calendar-wrap">
 						<div id="custom-inner" class="custom-inner">
 						<form action="DailyWorkCheck" method="get">
-						<input type="hidden" name="id" value=<%=u.getId()%>>
+						<input type="hidden" name="id" value="${userInfo.getId()}">
 							<div class="custom-header clearfix">
 								<nav>
 									<span id="custom-prev" class="custom-prev"></span>

@@ -3,6 +3,7 @@ package beans;
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 
 
 public class WorkSituationBeans implements Serializable {
@@ -50,6 +51,11 @@ public class WorkSituationBeans implements Serializable {
 
 	public Date getCreateDate() {
 		return createDate;
+	}
+
+	public String getFormatCreateDate() {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd");
+		return sdf.format(this.createDate);
 	}
 
 	public void setCreateDate(Date createDate) {

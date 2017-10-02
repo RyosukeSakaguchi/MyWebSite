@@ -52,28 +52,33 @@ public class WorkSituationDelete extends HttpServlet {
 			int year = Integer.parseInt(request.getParameter("year"));
 			int month = Integer.parseInt(request.getParameter("month"));
 
+			// パラメータidに対応するUserBeans型のuserInfoインスタンスをリクエストスコープに保存
 			UserBeans userInfo = new UserBeans();
 			userInfo = UserInfoDao.findAll(id);
 			request.setAttribute("userInfo", userInfo);
 
+			// 勤務状況のリストを取得し、workSituationListインスタンスをリクエストスコープに保存
 			String loginId = userInfo.getLoginId();
-
 			List<WorkSituationBeans> workSituationList = new ArrayList<WorkSituationBeans>();
 			workSituationList = WorkSituationDao.findAll(loginId, year, month);
 			request.setAttribute("workSituationList", workSituationList);
 
+			// リクエストスコープにパラメータを保存
 			request.setAttribute("id", id);
 			request.setAttribute("year", year);
 			request.setAttribute("month", month);
 
+			// 勤務状況のリストがない場合はエラーメッセージとともにMonthlyWorkCheckへフォワード
 			if (workSituationList.size() == 0) {
 				request.setAttribute("errMsg", "削除するデータがありません。");
+
 				// MonthlyWorkCheckへフォワード
 				RequestDispatcher dispatcher = request.getRequestDispatcher("MonthlyWorkCheck");
 				dispatcher.forward(request, response);
 				return;
 			}
 
+			// 削除確認メッセージをリクエストスコープに保存
 			request.setAttribute("confMsg1", "本当に");
 			request.setAttribute("confMsg2", year + "年" + month + "月");
 			request.setAttribute("confMsg3", "のデータを全て削除してもよろしいでしょうか。");
@@ -91,29 +96,34 @@ public class WorkSituationDelete extends HttpServlet {
 			int month = Integer.parseInt(request.getParameter("month"));
 			int date = Integer.parseInt(request.getParameter("date"));
 
+			// パラメータidに対応するUserBeans型のuserInfoインスタンスをリクエストスコープに保存
 			UserBeans userInfo = new UserBeans();
 			userInfo = UserInfoDao.findAll(id);
 			request.setAttribute("userInfo", userInfo);
 
+			// 勤務状況のリストを取得し、workSituationListインスタンスをリクエストスコープに保存
 			String loginId = userInfo.getLoginId();
-
 			List<WorkSituationBeans> workSituationList = new ArrayList<WorkSituationBeans>();
 			workSituationList = WorkSituationDao.findAll(loginId, year, month, date);
 			request.setAttribute("workSituationList", workSituationList);
 
+			// リクエストスコープにパラメータを保存
 			request.setAttribute("id", id);
 			request.setAttribute("year", year);
 			request.setAttribute("month", month);
 			request.setAttribute("date", date);
 
+			// 勤務状況のリストがない場合はエラーメッセージとともにDailyWorkCheckへフォワード
 			if (workSituationList.size() == 0) {
 				request.setAttribute("errMsg", "削除するデータがありません。");
+
 				// DailyWorkCheckへフォワード
 				RequestDispatcher dispatcher = request.getRequestDispatcher("DailyWorkCheck");
 				dispatcher.forward(request, response);
 				return;
 			}
 
+			// 削除確認メッセージをリクエストスコープに保存
 			request.setAttribute("confMsg1", "本当に");
 			request.setAttribute("confMsg2", year + "年" + month + "月" + date + "日");
 			request.setAttribute("confMsg3", "のデータを削除してもよろしいでしょうか。");
@@ -136,21 +146,30 @@ public class WorkSituationDelete extends HttpServlet {
 		int month = Integer.parseInt(request.getParameter("month"));
 		int date = Integer.parseInt(request.getParameter("date"));
 		String workSituationIdList[] = request.getParameterValues("workSituationIdList[]");
+
 		// ユーザーを探してuserInfoに代入
 		UserBeans userInfo = UserInfoDao.findAll(id);
 
+		// リクエストパラメータがnullかそうでないかで分岐
 		if(request.getParameter("date") == null) {
+			// 削除履歴を作成
 			WorkSituationEditDao.setEditHistory(userInfo.getLoginId(), year, month);
+
+			// 勤務状況を削除
 			for (int i = 0; i < workSituationIdList.length; i++) {
 				WorkSituationDao.situDel(workSituationIdList[i]);
 			}
 		}else {
+			// 削除履歴を作成
 			WorkSituationEditDao.setEditHistory(userInfo.getLoginId(), year, month, date);
+
+			// 勤務状況を削除
 			for (int i = 0; i < workSituationIdList.length; i++) {
 				WorkSituationDao.situDel(workSituationIdList[i]);
 			}
 		}
 
+		// リクエストスコープにパラメータを保存
 		request.setAttribute("id", id);
 
 		// UserListへリダイレクト

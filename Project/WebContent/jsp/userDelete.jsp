@@ -18,42 +18,35 @@
 				<div class="fh5co-intro no-js-fullheight">
 					<div class="fh5co-intro-text">
 						<div class="fh5co-center-position">
-							<%
-								UserBeans u = (UserBeans) request.getAttribute("userInfo");
-								UserBeans userList[] = (UserBeans[])request.getAttribute("userList[]");
-								if(u != null){
-							%>
-							<h2 class="animate-box">
-								<font size="5">本当にログインID&nbsp;:&nbsp;<font color="red"><%=u.getLoginId()%></font>を削除してもよろしいでしょうか。</font>
-							</h2>
-							<%
-								}else if(request.getAttribute("userList[]") != null){
-							%>
+							<c:choose>
+								<c:when test="${userInfo != null}">
 									<h2 class="animate-box">
-									<font size="5">本当にログインID&nbsp;:&nbsp;
-							<%
-									for(int i = 0; i < userList.length; i++){
-										if(i == userList.length - 1){
-							%>
-										<font color="red"><%=userList[i].getLoginId()%></font>
-							<% 			}else{%>
-										<font color="red"><%=userList[i].getLoginId()%></font>,
-							<%
-										}
-									}
-							%>
-								 を削除してもよろしいでしょうか。</font></h2>
-							<%
-								}else{
-							%>
-									<h2 class="animate-box">
-									<font size="5">本当に<font color="red">全ユーザー</font>を削除してもよろしいでしょうか。</font>
+										<font size="5">本当にログインID&nbsp;:&nbsp;<font color="red">${ userInfo.getLoginId()}</font>を削除してもよろしいでしょうか。</font>
 									</h2>
-							<%
-								}
-							%>
-
-							<br><br>
+								</c:when>
+								<c:when test="${userList != null}">
+									<div class="animate-box" style="color:white;">
+										<font size="5">本当にログインID&nbsp;:&nbsp;
+											<c:forEach var="obj" items="${userList}" varStatus="status" >
+												<c:choose>
+													<c:when test="${status.index == userList.size() - 1}">
+														<font color="red">${obj.getLoginId()}</font>
+													</c:when>
+													<c:otherwise>
+														<font color="red">${obj.getLoginId()}</font>,
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+											 を削除してもよろしいでしょうか。
+										</font>
+									</dix>
+								</c:when>
+								<c:otherwise>
+									<h2 class="animate-box">
+										<font size="5">本当に<font color="red">全ユーザー</font>を削除してもよろしいでしょうか。</font>
+									</h2>
+								</c:otherwise>
+							</c:choose><br><br>
 							<p class="animate-box">
 								<div class="wrapper">
 									<div>
@@ -61,20 +54,16 @@
 									</div>
 									<div>
 										<form action="UserDelete" method="post">
-												<%
-													if(u != null){
-												%>
-												<input type="hidden" value="<%=u.getId()%>" name="id">
-												<%
-													}else if(request.getAttribute("userList[]") != null){
-														for(int i = 0; i < userList.length; i++){
-												%>
-												<input type="hidden" value="<%=userList[i].getId()%>" name="idList[]">
-												<%
-														}
-													}
-												%>
-
+											<c:choose>
+												<c:when test="${userInfo != null}">
+													<input type="hidden" value="${ userInfo.getId()}" name="id">
+													</c:when>
+												<c:when test="${userList != null}">
+													<c:forEach var="obj" items="${userList}" varStatus="status" >
+														<input type="hidden" value="${obj.getId()}" name="idList[]">
+													</c:forEach>
+												</c:when>
+											</c:choose>
 											<button  class="btn btn-outline" type="submit"><i class="icon-play2"></i> OK</button>
 										</form>
 									</div>

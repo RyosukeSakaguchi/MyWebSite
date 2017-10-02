@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="beans.UserBeans"%>
 <%@ page import="beans.WorkSituationBeans"%>
 <%@ page import="beans.WorkSituationEditBeans"%>
@@ -16,13 +17,10 @@
 	</head>
 
 	<body>
-		<%
-			UserBeans userInfo = (UserBeans) request.getAttribute("userInfo");
-		%>
 
 		<div id="fh5co-page" style="width:95%">
 			<ul class="pull-left left-menu">
-				<br>　　　　　<a class="btn btn-default" style="border: 2px solid black;" href="UserDetail?id=<%=userInfo.getId()%>">戻る</a>
+				<br>　　　　　<a class="btn btn-default" style="border: 2px solid black;" href="UserDetail?id=${userInfo.getId()}">戻る</a>
 			</ul>
 			<ul class="pull-right center-right">
 				<br><a class="btn btn-default" style="border: 2px solid black;" href="Logout">ログアウト</a>
@@ -32,10 +30,7 @@
 		<section id="fh5co-projects">
 			<div class="fh5co-overlay"></div>
 			<div class="container" style="width: 100%;">
-				<%
-					String name = (String)request.getAttribute("name");
-				%>
-				<div style="text-align: center;"><%=name%>の編集履歴${dispMsg}</div><br><br>
+				<div style="text-align: center;">${name}の編集履歴${dispMsg}</div><br><br>
 				<div class="fh5co-intro js-fullheight">
 					<div class="fh5co-intro-text">
 						<div class="fh5co-center-position">
@@ -50,42 +45,35 @@
 												</tr>
 											</thead>
 											<tbody>
-												<%
-													boolean result = (boolean)request.getAttribute("result");
-													int count;
-													List<WorkSituationEditBeans> workSituationEditList = (List<WorkSituationEditBeans>) request.getAttribute("workSituationEditList");
-													if(result){
-														count = workSituationEditList.size()-20;
-													}else{
-														count = workSituationEditList.size()-5;
-													}
-													for(int i = workSituationEditList.size()-1;i >= count ;i--){
-												%>
-												<tr>
-													<td style="text-align: center;"><%=workSituationEditList.get(i).getEditDate()%></td>
-													<td style="text-align: center;"><%=workSituationEditList.get(i).getEditContent()%></td>
-												</tr>
-												<%
-														if(i == 0){
-															break;
-														}
-													}
-												%>
+												<c:choose>
+													<c:when test="${result}">
+														<c:forEach var="i" begin="0" end="19"  >
+															<tr>
+																<td style="text-align: center;">${workSituationEditList.get(i).getFormatEditDate()}</td>
+																<td style="text-align: center;">${workSituationEditList.get(i).getEditContent()}</td>
+															</tr>
+														</c:forEach>
+													</c:when>
+													<c:otherwise>
+														<c:forEach var="i" begin="0" end="4">
+															<tr>
+																<td style="text-align: center;">${workSituationEditList.get(i).getFormatEditDate()}</td>
+																<td style="text-align: center;">${workSituationEditList.get(i).getEditContent()}</td>
+															</tr>
+														</c:forEach>
+													</c:otherwise>
+												</c:choose>
 											</tbody>
 										</table><br><br>
 										<div class=button_wrapper >
-											<%
-												if(result){
-											%>
-												<a class="btn btn-primary" href="WorkSituationEditHistory?id=<%=userInfo.getId()%>" >最新5件を表示</a><br>
-											<%
-												}else{
-											%>
-												<a class="btn btn-primary" href="WorkSituationEditHistory?id=<%=userInfo.getId()%>&disp=20" >最新20件を表示</a><br>
-
-											<%
-												}
-											%>
+											<c:choose>
+												<c:when test="${result}">
+													<a class="btn btn-primary" href="WorkSituationEditHistory?id=${userInfo.getId()}" >最新5件を表示</a><br>
+												</c:when>
+												<c:otherwise>
+													<a class="btn btn-primary" href="WorkSituationEditHistory?id=${userInfo.getId()}&disp=20" >最新20件を表示</a><br>
+												</c:otherwise>
+											</c:choose>
 										</div>
 									</div>
 								</div>

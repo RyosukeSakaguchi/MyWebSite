@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,8 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import beans.PositionBeans;
 import beans.UserBeans;
 import common.UtilLogic;
+import dao.DaoUtil;
 import dao.UserInfoDao;
 
 /**
@@ -50,6 +53,10 @@ public class SignUp extends HttpServlet {
 			// LoginScreenへリダイレクト
 			response.sendRedirect("WorkSituationRegistration");
 		} else {
+			List<PositionBeans> positonList = DaoUtil.findAllPosition();
+			//リクエストパラメーターを保存
+			request.setAttribute("positonList" ,positonList);
+
 			// signUp.jspへフォワード
 			RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/signUp.jsp");
 			dispatcher.forward(request, response);
@@ -85,6 +92,10 @@ public class SignUp extends HttpServlet {
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
+
+		List<PositionBeans> positonList = DaoUtil.findAllPosition();
+		//リクエストパラメーターを保存
+		request.setAttribute("positonList" ,positonList);
 
 		// 入力項目に未入力があるかないかで分岐
 		if (!UserInfoDao.userCheck(loginId, password, passwordConf, name, birthDate)) {

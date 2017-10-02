@@ -5,7 +5,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,7 +16,9 @@ import common.UtilLogic;
 
 public class WorkSituationDao {
 
-	/** ログインIDと年と月を受け取り、対応するWorkSituationBeans型のListを返す
+	/**
+	 * ログインIDと年と月を受け取り、対応するWorkSituationBeans型のListを返す
+	 *
 	 * @param loginId
 	 * @param year
 	 * @param month
@@ -32,12 +33,17 @@ public class WorkSituationDao {
 			conn = DBManager.getConnection();
 
 			// SELECT文を準備
-			String sql = "SELECT * FROM work_situation where login_id='" + loginId + "' and YEAR(create_date)='" + year
-					+ "' and MONTH(create_date)='" + month + "'";
+			String sql = "SELECT * FROM work_situation where login_id= ? and YEAR(create_date)= ? and MONTH(create_date)= ?";
 
 			// SELECTを実行し、結果表を取得
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
+			PreparedStatement pStmt = conn.prepareStatement(sql);
+			pStmt.setString(1, loginId);
+			pStmt.setInt(2, year);
+			pStmt.setInt(3, month);
+
+			// SELECTを実行し、結果表（ResultSet）を取得
+			ResultSet rs = pStmt.executeQuery();
+
 			// 結果表に格納されたレコードの内容を
 			// WorkSituationBeansインスタンスに設定し、Listインスタンスに追加
 			while (rs.next()) {
@@ -70,7 +76,9 @@ public class WorkSituationDao {
 		return workSituationList;
 	}
 
-	/** ログインIDと年と月と日を受け取り、対応するWorkSituationBeans型のListを返す
+	/**
+	 * ログインIDと年と月と日を受け取り、対応するWorkSituationBeans型のListを返す
+	 *
 	 * @param loginId
 	 * @param year
 	 * @param month
@@ -86,12 +94,17 @@ public class WorkSituationDao {
 			conn = DBManager.getConnection();
 
 			// SELECT文を準備
-			String sql = "SELECT * FROM work_situation where login_id='" + loginId + "' and YEAR(create_date)='" + year
-					+ "' and MONTH(create_date)='" + month + "' and DAY(create_date)='" + date + "'";
+			String sql = "SELECT * FROM work_situation where login_id= ? and YEAR(create_date)= ? and MONTH(create_date)= ? and DAY(create_date)= ? ";
 
 			// SELECTを実行し、結果表を取得
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
+			PreparedStatement pStmt = conn.prepareStatement(sql);
+			pStmt.setString(1, loginId);
+			pStmt.setInt(2, year);
+			pStmt.setInt(3, month);
+			pStmt.setInt(4, date);
+
+			// SELECTを実行し、結果表（ResultSet）を取得
+			ResultSet rs = pStmt.executeQuery();
 
 			// 結果表に格納されたレコードの内容を
 			// WorkSituationBeansインスタンスに設定し、ArrayListインスタンスに追加
@@ -125,7 +138,9 @@ public class WorkSituationDao {
 		return workSituationList;
 	}
 
-	/** idを受け取り、対応する勤務状況を消去する
+	/**
+	 * idを受け取り、対応する勤務状況を消去する
+	 *
 	 * @param id
 	 */
 	public static void situDel(String id) {
@@ -157,7 +172,9 @@ public class WorkSituationDao {
 		}
 	}
 
-	/** ログインIDと今日の日付と時間の名前を受け取り、対応する時間を返す
+	/**
+	 * ログインIDと今日の日付と時間の名前を受け取り、対応する時間を返す
+	 *
 	 * @param loginId
 	 * @param today
 	 * @param timeName
@@ -172,14 +189,17 @@ public class WorkSituationDao {
 			conn = DBManager.getConnection();
 
 			// SELECT文を準備
-			String sql = "SELECT " + timeName + " FROM work_situation where login_id='" + loginId + "'AND create_date='"
-					+ today + "'";
+			String sql = "SELECT " + timeName + " FROM work_situation where login_id= ? and create_date= ? ";
 
 			// SELECTを実行し、結果表を取得
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
+			PreparedStatement pStmt = conn.prepareStatement(sql);
+			pStmt.setString(1, loginId);
+			pStmt.setDate(2, today);
 
-			//受け取ったレコードをtimeに代入
+			// SELECTを実行し、結果表（ResultSet）を取得
+			ResultSet rs = pStmt.executeQuery();
+
+			// 受け取ったレコードをtimeに代入
 			while (rs.next()) {
 				time = rs.getTime(timeName);
 			}
@@ -198,7 +218,9 @@ public class WorkSituationDao {
 		return time;
 	}
 
-	/** ログインIDと時間マスターテーブルの勤務開始時間を受けとり、出席状況と勤務開始時間をテーブルに記録
+	/**
+	 * ログインIDと時間マスターテーブルの勤務開始時間を受けとり、出席状況と勤務開始時間をテーブルに記録
+	 *
 	 * @param loginId
 	 * @param workStartMaster
 	 */
@@ -209,15 +231,15 @@ public class WorkSituationDao {
 			// データベースへ接続
 			conn = DBManager.getConnection();
 
-			//今日の日付を時間を取得
+			// 今日の日付を時間を取得
 			Date today = new Date(Calendar.getInstance().getTimeInMillis());
 			Time now = new Time(Calendar.getInstance().getTimeInMillis());
 
-			//Time型の今の時刻nowと時間マスターテーブルの勤務開始時間workStartMasterをint型にする
+			// Time型の今の時刻nowと時間マスターテーブルの勤務開始時間workStartMasterをint型にする
 			int nowInt = UtilLogic.timeToInt(now);
 			int workStartMasterInt = UtilLogic.timeToInt(workStartMaster);
 
-			//現在の時刻と時間マスターテーブルの勤務開始時間を比べ遅刻したか、通常の出席で分岐
+			// 現在の時刻と時間マスターテーブルの勤務開始時間を比べ遅刻したか、通常の出席で分岐
 			String workSituation;
 			if (nowInt > workStartMasterInt) {
 				workSituation = "遅刻";
@@ -226,11 +248,14 @@ public class WorkSituationDao {
 			}
 
 			// INSERT文を準備
-			String sql = "INSERT INTO work_situation (login_id, create_date, work_situ ,work_start ,work_end ,break_time ,work_time , overtime) VALUES ('"
-					+ loginId + "', '" + today + "','" + workSituation + "', '" + now + "', '', '', '', '')";
+			String sql = "INSERT INTO work_situation (login_id, create_date, work_situ ,work_start ,work_end ,break_time ,work_time , overtime) VALUES ( ? , ? , ? , ? , '', '', '', '')";
 
 			// INSERTを実行し、結果表を取得
 			PreparedStatement pStmt = conn.prepareStatement(sql);
+			pStmt.setString(1, loginId);
+			pStmt.setDate(2, today);
+			pStmt.setString(3, workSituation);
+			pStmt.setString(4, UtilLogic.intToStringTime(nowInt));
 
 			// INSERTを実行
 			pStmt.executeUpdate();
@@ -248,8 +273,9 @@ public class WorkSituationDao {
 		}
 	}
 
-	/** ログインIDと休憩時間と時間マスターテーブルの勤務開始時間を受けとり、
-	 *  勤務時間が正の値だったら、出席状況と勤務開始時間をテーブルに記録
+	/**
+	 * ログインIDと休憩時間と時間マスターテーブルの勤務開始時間を受けとり、 勤務時間が正の値だったら、出席状況と勤務開始時間をテーブルに記録
+	 *
 	 * @param loginId
 	 * @param breakTime
 	 * @param workEndMaster
@@ -263,66 +289,69 @@ public class WorkSituationDao {
 			// データベースへ接続
 			conn = DBManager.getConnection();
 
-			//今日の日付を時間を取得
+			// 今日の日付を時間を取得
 			Date today = new Date(Calendar.getInstance().getTimeInMillis());
 			Time now = new Time(Calendar.getInstance().getTimeInMillis());
 
-			//今日の日付と受け取ったログインIDに関する勤務開始時間をworkStartに代入
+			// 今日の日付と受け取ったログインIDに関する勤務開始時間をworkStartに代入
 			Time workStart = getTime(loginId, today, "work_start");
 
-			//id=1に対する時間マスターテーブルの勤務時間をworkTimeMasterに代入
+			// id=1に対する時間マスターテーブルの勤務時間をworkTimeMasterに代入
 			Time workTimeMaster = DaoUtil.getTime(1, "work_time");
 
-			//workTimeIntを計算
+			// workTimeIntを計算
 			int workTimeInt = UtilLogic.timeSubtraction(
 					UtilLogic.timeSubtraction(UtilLogic.timeToInt(now), UtilLogic.timeToInt(workStart)),
 					UtilLogic.stringTimeToInt(breakTime));
 
-			//計算したworkTimeIntが負の時、falseを返す
+			// 計算したworkTimeIntが負の時、falseを返す
 			if (workTimeInt < 0) {
 				result = false;
 				return result;
 			}
 
-			//int型の勤務時間をString型の勤務時間に変換(ex : 123456 → 12:34:56)
-			String workTime = UtilLogic.intToStringTime(workTimeInt);
+			// 勤務時間が時間マスターテーブルの勤務時間を超えていたら、残業時間を計算し代入
 
-			//勤務時間が時間マスターテーブルの勤務時間を超えていたら、残業時間を計算し代入
-			String overtime = "00:00:00";
+			int overtimeInt = 0;
 			int workTimeMasterInt = UtilLogic.timeToInt(workTimeMaster);
 			if (workTimeMasterInt < workTimeInt) {
-				int overtimeInt;
 				overtimeInt = UtilLogic.timeSubtraction(workTimeInt, workTimeMasterInt);
-				overtime = UtilLogic.intToStringTime(overtimeInt);
 			}
 
-
+			// 現在の時間と時間マスターの勤務終了時間をint型にする
 			int nowInt = UtilLogic.timeToInt(now);
 			int workEndMasterInt = UtilLogic.timeToInt(workEndMaster);
 
+			// 今日の日付とログインIDを代入して、対応する勤務状況のリストに代入
 			String yearAndMonthAndDate = new SimpleDateFormat("yyyy-MM-dd").format(today);
-
 			List<WorkSituationBeans> workSituationList = findAll(loginId,
 					UtilLogic.yearAndMonthAndDateToYear(yearAndMonthAndDate),
 					UtilLogic.yearAndMonthAndDateToMonth(yearAndMonthAndDate),
 					UtilLogic.yearAndMonthAndDateToDate(yearAndMonthAndDate));
+
+			// 勤務終了時間が時間マスターテーブルの勤務終了時間より、遅かったら帰宅、早かったら早退
 			String workSituation = "";
 			for (WorkSituationBeans w : workSituationList) {
 				workSituation = w.getWorkSitu();
 			}
-
 			if (nowInt >= workEndMasterInt) {
 				workSituation = workSituation + " → 帰宅";
 			} else {
 				workSituation = workSituation + " → 早退";
 			}
-			// INSERT文を準備
-			String sql = "UPDATE work_situation SET work_situ = '" + workSituation + "' ,work_end = '" + now
-					+ "' , break_time = '" + breakTime + "' ,  work_time = '" + workTime + "', overtime = '" + overtime
-					+ "' WHERE login_id = '" + loginId + "' and create_date = '" + today + "'";
-			// INSERTを実行し、結果表を取得
+
+			// UPDATE文を準備
+			String sql = "UPDATE work_situation SET work_situ = ? ,work_end = ? , break_time = ? ,work_time = ? , overtime = ? WHERE login_id = ? and create_date = ?";
+
+			// UPDATEを実行し、結果表を取得
 			PreparedStatement pStmt = conn.prepareStatement(sql);
-			// INSERTを実行
+			pStmt.setString(1, workSituation);
+			pStmt.setString(2, UtilLogic.intToStringTime(nowInt));
+			pStmt.setString(3, breakTime);
+			pStmt.setString(4, UtilLogic.intToStringTime(workTimeInt));
+			pStmt.setString(5, UtilLogic.intToStringTime(overtimeInt));
+			pStmt.setString(6, loginId);
+			pStmt.setDate(7, today);
 			pStmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -339,6 +368,15 @@ public class WorkSituationDao {
 		return result;
 	}
 
+	/**
+	 * 編集する勤務状況のidと入力された勤務開始時間、勤務終了時間、休憩時間を受け取り、勤務状況を編集するし、正しい入力の時はtrueを返す
+	 *
+	 * @param workSituationId
+	 * @param workStart
+	 * @param workEnd
+	 * @param breakTime
+	 * @return boolean
+	 */
 	public static boolean workSituationEdit(int workSituationId, String workStart, String workEnd, String breakTime) {
 		Connection conn = null;
 		boolean result = true;
@@ -347,14 +385,17 @@ public class WorkSituationDao {
 			// データベースへ接続
 			conn = DBManager.getConnection();
 
+			// 勤務開始時間、終了時間と時間マスターの開始時間、終了時間をint型にする(ex : 09:53:23→95323)
 			int workStartInt = UtilLogic.stringTimeToInt(workStart);
+			int workEndInt = UtilLogic.stringTimeToInt(workEnd);
 			Time workStartMaster = DaoUtil.getTime(1, "work_start");
 			int workStartMasterInt = UtilLogic.timeToInt(workStartMaster);
-			int workEndInt = UtilLogic.stringTimeToInt(workEnd);
 			Time workEndMaster = DaoUtil.getTime(1, "work_end");
 			int workEndMasterInt = UtilLogic.timeToInt(workEndMaster);
-			String workSituation;
 
+			// 初めは勤務終了時間が入力されていない段階での編集では、開始時間がマスターの開始時間より早いかそうでないかで分岐
+			// 勤務終了時間が入力されている段階での編集でも、開始時間がマスターの開始時間より早いかそうでないかで分岐
+			String workSituation;
 			if (workEndInt == 0) {
 				if (workStartInt > workStartMasterInt) {
 					workSituation = "遅刻";
@@ -376,40 +417,45 @@ public class WorkSituationDao {
 					}
 				}
 			}
-			String overtime = "00:00:00";
-			String workTime = "00:00:00";
 
-
+			// 勤務終了時間が記入されているか、いないかで分岐
+			int workTimeInt = 0;
+			int overtimeInt = 0;
 			if (UtilLogic.stringTimeToInt(workEnd) != 0) {
 
-				int workTimeInt = UtilLogic.timeSubtraction(
+				// 勤務時間をint型で時間計算(ex : 194323-094212-10000→090111)
+				workTimeInt = UtilLogic.timeSubtraction(
 						UtilLogic.timeSubtraction(UtilLogic.stringTimeToInt(workEnd), workStartInt),
 						UtilLogic.stringTimeToInt(breakTime));
 
+				// int型の勤務時間が負の時は入力に誤りがあるのでfalseをreturn
 				if (workTimeInt < 0) {
 					result = false;
 					return result;
 				}
-				workTime = UtilLogic.intToStringTime(workTimeInt);
 
+				// 時間マスターから勤務時間を取得し、その勤務時間より時間が長かったらその差分を残業時間に代入
 				Time workTimeMaster = DaoUtil.getTime(1, "work_time");
 				int workTimeMasterInt = UtilLogic.timeToInt(workTimeMaster);
-
 				if (workTimeMasterInt < workTimeInt) {
-					int overtimeInt;
 					overtimeInt = UtilLogic.timeSubtraction(workTimeInt, workTimeMasterInt);
-					overtime = UtilLogic.intToStringTime(overtimeInt);
 				}
 			}
 
-			// INSERT文を準備
-			String sql = "UPDATE work_situation SET work_situ = '" + workSituation + "', work_start = '" + workStart
-					+ "' ,work_end = '" + workEnd + "' , break_time = '" + breakTime + "' , work_time = '" + workTime
-					+ "' , overtime = '" + overtime + "' WHERE id = '" + workSituationId + "'";
-			// INSERTを実行し、結果表を取得
+			// UPDATE文を準備
+			String sql = "UPDATE work_situation SET work_situ = ? , work_start = ? ,work_end = ? , break_time = ? , work_time = ? , overtime = ? WHERE id = ?";
+
+			// UPDATEを実行
 			PreparedStatement pStmt = conn.prepareStatement(sql);
-			// INSERTを実行
+			pStmt.setString(1, workSituation);
+			pStmt.setString(2, workStart);
+			pStmt.setString(3, workEnd);
+			pStmt.setString(4, breakTime);
+			pStmt.setString(5, UtilLogic.intToStringTime(workTimeInt));
+			pStmt.setString(6, UtilLogic.intToStringTime(overtimeInt));
+			pStmt.setInt(7, workSituationId);
 			pStmt.executeUpdate();
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -425,11 +471,18 @@ public class WorkSituationDao {
 		return result;
 	}
 
+	/**
+	 * ユーザーが出勤前だったらtrue、後だったらfalseを返す
+	 *
+	 * @param loginId
+	 * @return boolean
+	 */
 	public static boolean isBeforeWorking(String loginId) {
 		Connection conn = null;
 
+		// 今日の日付をyyyy-MM-ddの形でtodayStringに代入
 		Date today = new Date(System.currentTimeMillis());
-		SimpleDateFormat d = new SimpleDateFormat("yyy-MM-dd");
+		SimpleDateFormat d = new SimpleDateFormat("yyyy-MM-dd");
 		String todayString = d.format(today);
 
 		try {
@@ -445,7 +498,7 @@ public class WorkSituationDao {
 			// SELECTを実行し、結果表（ResultSet）を取得
 			ResultSet rs = pStmt.executeQuery();
 
-			// 結果表に格納されたレコード数で繰り返し
+			// 結果表に格納されたレコード数で繰り返し、格納されていたらfalseを返す
 			if (rs.next()) {
 				return false;
 			}
@@ -464,11 +517,18 @@ public class WorkSituationDao {
 		return true;
 	}
 
+	/**
+	 * ユーザーが出勤中だったらtrue、それ以外だったらfalseを返す
+	 *
+	 * @param loginId
+	 * @return boolean
+	 */
 	public static boolean isWorking(String loginId) {
 		Connection conn = null;
 
+		// 今日の日付をyyyy-MM-ddの形でtodayStringに代入
 		Date today = new Date(System.currentTimeMillis());
-		SimpleDateFormat d = new SimpleDateFormat("yyy-MM-dd");
+		SimpleDateFormat d = new SimpleDateFormat("yyyy-MM-dd");
 		String todayString = d.format(today);
 
 		try {
@@ -484,7 +544,7 @@ public class WorkSituationDao {
 			// SELECTを実行し、結果表（ResultSet）を取得
 			ResultSet rs = pStmt.executeQuery();
 
-			// 結果表に格納されたレコード数で繰り返し
+			// 結果表に格納されたレコード数で繰り返し、格納されていて、そのwork_situの文字数が2文字(ex : 出席、遅刻)ならtrueを返す
 			if (rs.next()) {
 				if (rs.getString("work_situ").length() == 2) {
 					return true;
@@ -505,11 +565,18 @@ public class WorkSituationDao {
 		return false;
 	}
 
+	/**
+	 * ユーザーが帰宅だったらtrue、それ以外だったらfalseを返す
+	 *
+	 * @param loginId
+	 * @return boolean
+	 */
 	public static boolean isAfterWorking(String loginId) {
 		Connection conn = null;
 
+		// 今日の日付をyyyy-MM-ddの形でtodayStringに代入
 		Date today = new Date(System.currentTimeMillis());
-		SimpleDateFormat d = new SimpleDateFormat("yyy-MM-dd");
+		SimpleDateFormat d = new SimpleDateFormat("yyyy-MM-dd");
 		String todayString = d.format(today);
 
 		try {
@@ -525,7 +592,7 @@ public class WorkSituationDao {
 			// SELECTを実行し、結果表（ResultSet）を取得
 			ResultSet rs = pStmt.executeQuery();
 
-			// 結果表に格納されたレコード数で繰り返し
+			// 結果表に格納されたレコード数で繰り返し、格納されていて、そのwork_situの文字数が7文字(ex : 出席 → 帰宅)ならtrueを返す
 			if (rs.next()) {
 				if (rs.getString("work_situ").length() == 7) {
 					return true;
@@ -546,8 +613,17 @@ public class WorkSituationDao {
 		return false;
 	}
 
+	/**
+	 * ユーザーが帰宅中の時、現在の時間が時間マスターの勤務開始時間より遅れていたらtrue
+	 * 勤務中の時、現在の時間が時間マスターの勤務終了時間より遅れていたらtrue
+	 *
+	 * @param timeName
+	 * @return boolean
+	 */
 	public static boolean isOverTime(String timeName) {
 		Connection conn = null;
+
+		// 今の時間をTime型で取得
 		Time now = new Time(Calendar.getInstance().getTimeInMillis());
 
 		try {
@@ -562,7 +638,8 @@ public class WorkSituationDao {
 			// SELECTを実行し、結果表（ResultSet）を取得
 			ResultSet rs = pStmt.executeQuery();
 
-			// 結果表に格納されたレコード数で繰り返し
+			// 結果表に格納されたレコード数で繰り返し、格納されていて、
+			// 現在の時間が時間マスターの勤務開始時間または勤務終了時間より遅れていたらtrue
 			if (rs.next()) {
 				String timeString = rs.getString(timeName);
 				if (UtilLogic.timeToInt(now) > UtilLogic.stringTimeToInt(timeString)) {
@@ -584,6 +661,11 @@ public class WorkSituationDao {
 		return false;
 	}
 
+	/**
+	 * 受け取ったログインIDに対応する勤務状況を削除する
+	 *
+	 * @param loginId
+	 */
 	public static void userSituDel(String loginId) {
 		Connection conn = null;
 		try {
@@ -613,6 +695,10 @@ public class WorkSituationDao {
 
 	}
 
+	/**
+	 * 全ての勤務状況を削除する
+	 *
+	 */
 	public static void allUserSituDel() {
 		Connection conn = null;
 		try {
@@ -640,6 +726,5 @@ public class WorkSituationDao {
 		}
 
 	}
-
 
 }

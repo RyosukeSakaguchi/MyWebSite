@@ -1,6 +1,8 @@
 package attendanceRecord;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -43,7 +45,10 @@ public class UserDelete extends HttpServlet {
 			// LoginScreenへリダイレクト
 			response.sendRedirect("LoginScreen");
 		}else if (request.getParameter("id") == null) {
+			// リクエストスコープからパラメータを取得
 			String delListId[] = request.getParameterValues("delListId[]");
+
+			//パラメータがnullかそうでないかで分岐
 			if (delListId == null) {
 				// チェックをつけていないメッセージをリクエストスコープに保存
 				request.setAttribute("noCheckMsg", "未選択です");
@@ -55,14 +60,14 @@ public class UserDelete extends HttpServlet {
 
 			} else {
 
-				UserBeans[] userList = new UserBeans[delListId.length];
-
+				// UserBeans型のインスタンスの配列を生成し、パラメーターの配列delListId[]に対応するユーザーリストをリクエストスコープに保存
+				List<UserBeans> userList = new ArrayList<UserBeans>();
 				for (int i = 0; i < delListId.length; i++) {
-					userList[i] = new UserBeans();
-					userList[i] = UserInfoDao.findAll(Integer.parseInt(delListId[i]));
+					UserBeans userInfo = new UserBeans();
+					userInfo = UserInfoDao.findAll(Integer.parseInt(delListId[i]));
+					userList.add(userInfo);
 				}
-
-				request.setAttribute("userList[]", userList);
+				request.setAttribute("userList", userList);
 
 				// userDelete.jspへフォワード
 				RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/userDelete.jsp");
@@ -105,7 +110,11 @@ public class UserDelete extends HttpServlet {
 
 		// リクエストスコープにパラメーターがあるかで分岐
 		if (id == null) {
+
+			// パラメータがnullかそうでないかで分岐
 			if(request.getParameterValues("idList[]") != null) {
+
+			// 消去するユーザーのidリストに対応する勤務状況と勤務状況編集履歴とユーザー情報を削除
 			String idList[] = request.getParameterValues("idList[]");
 			for (int i = 0; i < idList.length; i++) {
 				UserBeans userInfo = new UserBeans();
@@ -113,14 +122,17 @@ public class UserDelete extends HttpServlet {
 				WorkSituationDao.userSituDel(userInfo.getLoginId());
 				WorkSituationEditDao.userSituEditDel(userInfo.getLoginId());
 				UserInfoDao.userDel(idList[i]);
+
 				// ユーザー消去成功のメッセージをリクエストスコープに保存
 				request.setAttribute("sucMsg", "ユーザー情報の削除に成功しました");
 
 			}
 			}else {
+				// 全ての勤務状況と勤務状況編集履歴とユーザー情報を削除
 				WorkSituationDao.allUserSituDel();
 				WorkSituationEditDao.allUserSituEditDel();
 				UserInfoDao.allUserDel();
+
 				// ユーザー消去成功のメッセージをリクエストスコープに保存
 				request.setAttribute("sucMsg", "全ユーザー情報の削除に成功しました");
 
@@ -132,12 +144,12 @@ public class UserDelete extends HttpServlet {
 			userList.doGet(request, response);
 			return;
 		} else {
+
+			// 消去するユーザーのidに対応する勤務状況と勤務状況編集履歴とユーザー情報を削除
 			UserBeans userInfo = new UserBeans();
 			userInfo = UserInfoDao.findAll(Integer.parseInt(id));
 			WorkSituationDao.userSituDel(userInfo.getLoginId());
 			WorkSituationEditDao.userSituEditDel(userInfo.getLoginId());
-
-			// ユーザーを消去するメソッドを実行
 			UserInfoDao.userDel(id);
 
 			// ユーザー消去成功のメッセージをリクエストスコープに保存

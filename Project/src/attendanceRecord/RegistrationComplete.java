@@ -19,41 +19,47 @@ import beans.UserBeans;
 public class RegistrationComplete extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public RegistrationComplete() {
-        super();
-    }
-
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// HttpSessionインスタンスの取得
-				HttpSession session = request.getSession();
-
-				// セッションにログイン情報があるかないかで分岐
-				if ((UserBeans) session.getAttribute("loginUser") == null) {
-					// LoginScreenへリダイレクト
-					response.sendRedirect("LoginScreen");
-				} else {
-					String situation = request.getParameter("situation");
-					if(situation.equals("start")) {
-						request.setAttribute("scsMsg", "今日も一日頑張りましょー");
-					}else {
-						request.setAttribute("scsMsg", "今日も一日お疲れ様でした");
-					}
-					// registrationComplete.jspへフォワード
-					RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/registrationComplete.jsp");
-					dispatcher.forward(request, response);
-				}
+	public RegistrationComplete() {
+		super();
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// HttpSessionインスタンスの取得
+		HttpSession session = request.getSession();
+
+		// セッションにログイン情報があるかないかで分岐
+		if ((UserBeans) session.getAttribute("loginUser") == null) {
+			// LoginScreenへリダイレクト
+			response.sendRedirect("LoginScreen");
+		} else {
+			// 勤務開始か終了かで分岐し、リクエストスコープにパラメータを保存
+			String situation = request.getParameter("situation");
+			if (situation.equals("start")) {
+				request.setAttribute("scsMsg", "今日も一日頑張りましょー");
+			} else {
+				request.setAttribute("scsMsg", "今日も一日お疲れ様でした");
+			}
+
+			// registrationComplete.jspへフォワード
+			RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/registrationComplete.jsp");
+			dispatcher.forward(request, response);
+		}
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		doGet(request, response);
 	}
 

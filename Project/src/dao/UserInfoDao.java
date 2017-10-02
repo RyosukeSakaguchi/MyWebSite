@@ -11,7 +11,6 @@ import java.util.List;
 
 import beans.SearchConditionBeans;
 import beans.UserBeans;
-import common.UtilLogic;
 
 public class UserInfoDao extends DaoUtil {
 
@@ -379,10 +378,15 @@ public class UserInfoDao extends DaoUtil {
 			conn = DBManager.getConnection();
 
 			// INSERT文を準備
-			String sql = "INSERT INTO user (login_id, name, position, birth_date, password, create_date, update_date) VALUES ('"
-					+ loginId + "' , '" + name + "' , '" + position + "' , '" + birthDate + "' , '" + encPass + "' , '"
-					+ dateStr + "' , '" + dateStr + "'  )";
+			String sql = "INSERT INTO user (login_id, name, position, birth_date, password, create_date, update_date) VALUES (? , ? , ? , ? , ? , ? , ?)";
 			PreparedStatement pStmt = conn.prepareStatement(sql);
+			pStmt.setString(1, loginId);
+			pStmt.setString(2, name);
+			pStmt.setString(3, position);
+			pStmt.setString(4, birthDate);
+			pStmt.setString(5, encPass);
+			pStmt.setString(6, dateStr);
+			pStmt.setString(7, dateStr);
 
 			// INSERTを実行
 			pStmt.executeUpdate();
@@ -497,7 +501,6 @@ public class UserInfoDao extends DaoUtil {
 		conditions2.add(new SearchConditionBeans("length( work_situ )", "6", WHERE_TYPE_EQUAL));
 		sql2 = addWhereCondition(sql2, conditions2);
 
-
 		PreparedStatement st1 = con.prepareStatement(sql1);
 		ResultSet rs1 = st1.executeQuery();
 		PreparedStatement st2 = con.prepareStatement(sql2);
@@ -512,38 +515,39 @@ public class UserInfoDao extends DaoUtil {
 
 		List<UserBeans> userList = new ArrayList<UserBeans>();
 
+		//
 		while (rs1.next()) {
-			UserBeans user = new UserBeans();
-			user.setId(rs1.getInt("id"));
-			user.setLoginId(rs1.getString("login_id"));
-			user.setName(rs1.getString("name"));
-			user.setPosition(rs1.getString("position"));
-			user.setBirthDate(rs1.getDate("birth_date"));
-			user.setPassword(rs1.getString("password"));
-			user.setCreateDate(rs1.getTimestamp("create_date"));
-			user.setCreateDate(rs1.getTimestamp("update_date"));
-			if(workSituation.equals("")) {
-				userList.add(user);
-			}else if(workSituation.equals("勤務中")){
-				for(String auli : attendUserLoginIdList) {
-					if(auli.equals(user.getLoginId())) {
+			if(rs1.getInt("id") != 1) {
+				UserBeans user = new UserBeans();
+				user.setId(rs1.getInt("id"));
+				user.setLoginId(rs1.getString("login_id"));
+				user.setName(rs1.getString("name"));
+				user.setPosition(rs1.getString("position"));
+				user.setBirthDate(rs1.getDate("birth_date"));
+				user.setPassword(rs1.getString("password"));
+				user.setCreateDate(rs1.getTimestamp("create_date"));
+				user.setCreateDate(rs1.getTimestamp("update_date"));
+				if(workSituation.equals("")) {
+					userList.add(user);
+				}else if(workSituation.equals("勤務中")){
+					for(String auli : attendUserLoginIdList) {
+						if(auli.equals(user.getLoginId())) {
+							userList.add(user);
+						}
+					}
+				}else if(workSituation.equals("帰宅")){
+					boolean result = true;
+					for(String auli : attendUserLoginIdList) {
+						if(auli.equals(user.getLoginId())) {
+							result = false;
+						}
+					}
+					if(result) {
 						userList.add(user);
 					}
 				}
-			}else if(workSituation.equals("帰宅")){
-				boolean result = true;
-				for(String auli : attendUserLoginIdList) {
-					if(auli.equals(user.getLoginId())) {
-						result = false;
-					}
-				}
-				if(result) {
-					userList.add(user);
-				}
 			}
 		}
-
-		userList = UtilLogic.userListSort(userList);
 
 		return userList;
 

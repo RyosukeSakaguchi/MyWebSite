@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,8 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import beans.PositionBeans;
 import beans.UserBeans;
 import common.UtilLogic;
+import dao.DaoUtil;
 import dao.UserInfoDao;
 
 /**
@@ -55,6 +58,10 @@ public class UserUpdate extends HttpServlet {
 			// ユーザーを探してuserInfoに代入
 			userInfo = UserInfoDao.findAll(id);
 			request.setAttribute("userInfo", userInfo);
+
+			List<PositionBeans> positonList = DaoUtil.findAllPosition();
+			//リクエストパラメーターを保存
+			request.setAttribute("positonList" ,positonList);
 
 			// userUpdate.jspへフォワード
 			RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/userUpdate.jsp");
@@ -121,7 +128,6 @@ public class UserUpdate extends HttpServlet {
 			return;
 		}
 
-
 		// パスワードとパスワード(確認)が同じであるか、もし同じ時にパスワードは未入力であるかで分岐
 		if (!encPass.equals(encPassConf)) {
 			request.setAttribute("errMsg", "パスワードとパスワード(確認)が一致しません。");
@@ -135,9 +141,12 @@ public class UserUpdate extends HttpServlet {
 			dao.UserInfoDao.userUpdate(id, encPass, name, position, birthDate, dateStr);
 		}
 
+		List<PositionBeans> positonList = DaoUtil.findAllPosition();
+		//リクエストパラメーターを保存
+		request.setAttribute("positonList" ,positonList);
+
 		// HttpSessionインスタンスの取得
 		HttpSession session = request.getSession();
-
 		UserBeans loginUser = (UserBeans) session.getAttribute("loginUser");
 
 		if(loginUser.getId() == 1) {

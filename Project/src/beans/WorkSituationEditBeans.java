@@ -2,6 +2,7 @@ package beans;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 public class WorkSituationEditBeans implements Serializable {
 
@@ -38,6 +39,11 @@ public class WorkSituationEditBeans implements Serializable {
 
 	public Timestamp getEditDate() {
 		return editDate;
+	}
+
+	public String getFormatEditDate() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分ss秒");
+		return sdf.format(this.editDate);
 	}
 
 	public void setEditDate(Timestamp editDate) {

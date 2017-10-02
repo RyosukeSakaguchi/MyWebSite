@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -119,10 +118,12 @@ public class DaoUtil {
 			conn = DBManager.getConnection();
 
 			// SELECT文を準備
-			String sql = "SELECT " + timeName + " FROM time_master where id='" + id + "'";
+			String sql = "SELECT " + timeName + " FROM time_master where id= ?";
+
 			// SELECTを実行し、結果表を取得
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
+			PreparedStatement pStmt = conn.prepareStatement(sql);
+			pStmt.setInt(1, id);
+			ResultSet rs = pStmt.executeQuery();
 
 			// 結果表に格納されたレコードの内容をtimeに代入
 			while (rs.next()) {
@@ -146,6 +147,9 @@ public class DaoUtil {
 
 	}
 
+	/** 全ての役職を返す
+	 * @return List<PositionBeans>
+	 */
 	public static List<PositionBeans> findAllPosition() {
 		Connection conn = null;
 		List<PositionBeans> positionList = new ArrayList<PositionBeans>();
