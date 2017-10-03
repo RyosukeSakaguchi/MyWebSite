@@ -70,7 +70,7 @@ public class WorkSituationDelete extends HttpServlet {
 
 			// 勤務状況のリストがない場合はエラーメッセージとともにMonthlyWorkCheckへフォワード
 			if (workSituationList.size() == 0) {
-				request.setAttribute("errMsg", "削除するデータがありません。");
+				request.setAttribute("errMsg", "削除するデータがありません");
 
 				// MonthlyWorkCheckへフォワード
 				RequestDispatcher dispatcher = request.getRequestDispatcher("MonthlyWorkCheck");

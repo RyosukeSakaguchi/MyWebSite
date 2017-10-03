@@ -47,20 +47,44 @@
 											<tbody>
 												<c:choose>
 													<c:when test="${result}">
-														<c:forEach var="i" begin="0" end="19"  >
-															<tr>
-																<td style="text-align: center;">${workSituationEditList.get(i).getFormatEditDate()}</td>
-																<td style="text-align: center;">${workSituationEditList.get(i).getEditContent()}</td>
-															</tr>
-														</c:forEach>
+														<c:choose>
+															<c:when test="${workSituationEditList.size() < 20}">
+																<c:forEach var="obj" items="${workSituationEditList}"  >
+																	<tr>
+																		<td style="text-align: center;">${obj.getFormatEditDate()}</td>
+																		<td style="text-align: center;">${obj.getEditContent()}</td>
+																	</tr>
+																</c:forEach>
+															</c:when>
+															<c:otherwise>
+																<c:forEach var="i" begin="0" end="19"  >
+																	<tr>
+																		<td style="text-align: center;">${workSituationEditList.get(i).getFormatEditDate()}</td>
+																		<td style="text-align: center;">${workSituationEditList.get(i).getEditContent()}</td>
+																	</tr>
+																</c:forEach>
+															</c:otherwise>
+														</c:choose>
 													</c:when>
 													<c:otherwise>
-														<c:forEach var="i" begin="0" end="4">
-															<tr>
-																<td style="text-align: center;">${workSituationEditList.get(i).getFormatEditDate()}</td>
-																<td style="text-align: center;">${workSituationEditList.get(i).getEditContent()}</td>
-															</tr>
-														</c:forEach>
+														<c:choose>
+															<c:when test="${workSituationEditList.size() < 5}">
+																<c:forEach var="obj" items="${workSituationEditList}"  >
+																	<tr>
+																		<td style="text-align: center;">${obj.getFormatEditDate()}</td>
+																		<td style="text-align: center;">${obj.getEditContent()}</td>
+																	</tr>
+																</c:forEach>
+															</c:when>
+															<c:otherwise>
+																<c:forEach var="i" begin="0" end="4">
+																	<tr>
+																		<td style="text-align: center;">${workSituationEditList.get(i).getFormatEditDate()}</td>
+																		<td style="text-align: center;">${workSituationEditList.get(i).getEditContent()}</td>
+																	</tr>
+																</c:forEach>
+															</c:otherwise>
+														</c:choose>
 													</c:otherwise>
 												</c:choose>
 											</tbody>

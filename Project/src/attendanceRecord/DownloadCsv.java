@@ -71,9 +71,6 @@ public class DownloadCsv extends HttpServlet {
 			userList = UserInfoDao.findAll();
 			CsvFileWrite.getSalary(response, userList, year, month);
 
-			// UserListへリダイレクト
-			response.sendRedirect("UserList");
-			return;
 		} else if (dateString == null) {
 			// リクエストスコープからパラメーターを取得
 			int id = Integer.parseInt(request.getParameter("id"));
@@ -95,10 +92,6 @@ public class DownloadCsv extends HttpServlet {
 			CsvFileWrite.getMonthlyWorkSituation(response, workSituationList, userInfo.getName(), year, month, titalWorkTime,
 					titalOvertime);
 
-			// MonyhlyWorkCheckへリダイレクト
-			response.sendRedirect("MonthlyWorkCheck?id=" + id + "&year=" + year + "&month=" + month);
-			return;
-
 		} else {
 			// リクエストスコープからパラメーターを取得
 			int id = Integer.parseInt(request.getParameter("id"));
@@ -116,9 +109,6 @@ public class DownloadCsv extends HttpServlet {
 			// 日の勤務状況をcsvに出力
 			CsvFileWrite.getDailyWorkSituation(response, workSituationList, userInfo.getName(), year, month, date);
 
-			// DailyWorkCheckへリダイレクト
-			response.sendRedirect("DailyWorkCheck?id=" + id + "&year=" + year + "&month=" + month + "&date=" + date);
-			return;
 		}
 	}
 

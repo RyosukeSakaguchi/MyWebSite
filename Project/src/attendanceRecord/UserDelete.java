@@ -135,9 +135,7 @@ public class UserDelete extends HttpServlet {
 
 				// ユーザー消去成功のメッセージをリクエストスコープに保存
 				request.setAttribute("sucMsg", "全ユーザー情報の削除に成功しました");
-
 			}
-
 
 			// UserListのdoGetメソッドを実行
 			UserList userList = new UserList();

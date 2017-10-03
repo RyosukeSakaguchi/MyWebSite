@@ -65,6 +65,7 @@ public class WorkSituationEditHistory extends HttpServlet {
 			request.setAttribute("userInfo", userInfo);
 			request.setAttribute("name", userInfo.getName());
 
+
 			// 勤務状況のリストを取得し、workSituationListインスタンスをリクエストスコープに保存
 			String loginId = userInfo.getLoginId();
 			List<WorkSituationEditBeans> workSituationEditList = new ArrayList<WorkSituationEditBeans>();

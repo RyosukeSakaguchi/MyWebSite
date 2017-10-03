@@ -371,7 +371,11 @@ public class UtilLogic {
 
 		//はじめに勤務中のユーザーをusersに加える
 		for(UserBeans user : userList) {
-			List<WorkSituationBeans> workSituationList = WorkSituationDao.findAll(user.getLoginId(), UtilLogic.yearAndMonthAndDateToYear(yearAndMonthAndDate), UtilLogic.yearAndMonthAndDateToMonth(yearAndMonthAndDate), UtilLogic.yearAndMonthAndDateToDate(yearAndMonthAndDate)) ;
+			List<WorkSituationBeans> workSituationList = WorkSituationDao.findAll(
+					user.getLoginId(),
+					UtilLogic.yearAndMonthAndDateToYear(yearAndMonthAndDate),
+					UtilLogic.yearAndMonthAndDateToMonth(yearAndMonthAndDate),
+					UtilLogic.yearAndMonthAndDateToDate(yearAndMonthAndDate)) ;
 			for(WorkSituationBeans w : workSituationList) {
 				if(w.getWorkSitu().length() == 2) {
 					users.add(user);
@@ -407,7 +411,12 @@ public class UtilLogic {
 		int userNumber = userList.size();
 
 		//必要なページ数を計算しreturn
-		int totalPageNumber = userNumber / userNumberPerPage + 1;
+		int totalPageNumber = 0;
+		if(userNumber % userNumberPerPage == 0) {
+			totalPageNumber = userNumber / userNumberPerPage;
+		}else {
+			totalPageNumber = userNumber / userNumberPerPage + 1;
+		}
 		return totalPageNumber;
 	}
 

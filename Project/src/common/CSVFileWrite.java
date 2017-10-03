@@ -10,7 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 import beans.UserBeans;
-import beans.WorkSituationBeans;;
+import beans.WorkSituationBeans;
 
 public class CsvFileWrite extends UtilLogic {
 
@@ -25,34 +25,33 @@ public class CsvFileWrite extends UtilLogic {
 	public static void getSalary(HttpServletResponse response, List<UserBeans> userList, int year, int month)
 			throws ServletException, IOException {
 
-		// ダウンロードファイル名を生成する
-		String filename = year + "年" + month + "月.csv";
-
-		// コンテキストにダウンロードファイル情報を設定する
-		response.setContentType("application/csv;charset=Shift-JIS");
-		response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
-
-		PrintWriter pw = response.getWriter();
-
-		// 内容を指定する
-		pw.print("ユーザー名");
-		pw.print(",");
-		pw.print("月給");
-		pw.println();
-
-		for (UserBeans user : userList) {
-			if (user.getId() != 1) {
-				pw.print(user.getName());
-				pw.print(",");
-				pw.print(getMonthlySalary(user.getLoginId(), user.getPosition(), year, month));
-				pw.print("円");
-				pw.print("\n");
-			}
-		}
-
 		try {
+			// ダウンロードファイル名を生成する
+			String filename = year + "年" + month + "月.csv";
+
+			// コンテキストにダウンロードファイル情報を設定する
+			response.setContentType("application/csv;charset=Shift-JIS");
+			response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
+
+			PrintWriter pw = response.getWriter();
+
+			// 内容を指定する
+			pw.print("ユーザー名");
+			pw.print(",");
+			pw.print("月給");
+			pw.println();
+
+			for (UserBeans user : userList) {
+				if (user.getId() != 1) {
+					pw.print(user.getName());
+					pw.print(",");
+					pw.print(getMonthlySalary(user.getLoginId(), user.getPosition(), year, month));
+					pw.print("円");
+					pw.println();
+				}
+			}
 			pw.close();
-		} catch (Exception ex) {
+		} catch (IOException ex) {
 			// 例外時処理
 			ex.printStackTrace();
 		}
@@ -73,6 +72,7 @@ public class CsvFileWrite extends UtilLogic {
 			String userName, int year, int month, String titalWorkTime, String titalOvertime)
 			throws ServletException, IOException {
 
+		try {
 			// ダウンロードファイル名を生成する
 			String filename = year + "年" + month + "月" + userName + ".csv";
 
@@ -83,6 +83,11 @@ public class CsvFileWrite extends UtilLogic {
 			PrintWriter pw = response.getWriter();
 
 			// 内容を指定する
+			pw.print(year + "年" + month + "月");
+			pw.print(",");
+			pw.print(userName);
+			pw.println();
+
 			pw.print("日付");
 			pw.print(",");
 			pw.print("勤務状況");
@@ -129,12 +134,11 @@ public class CsvFileWrite extends UtilLogic {
 			pw.print(titalOvertime);
 			pw.println();
 
-			try {
-				pw.close();
-			} catch (Exception ex) {
-				// 例外時処理
-				ex.printStackTrace();
-			}
+			pw.close();
+		} catch (IOException ex) {
+			// 例外時処理
+			ex.printStackTrace();
+		}
 
 	}
 
@@ -152,7 +156,6 @@ public class CsvFileWrite extends UtilLogic {
 			String userName, int year, int month, int date) throws ServletException, IOException {
 
 		try {
-
 			// ダウンロードファイル名を生成する
 			String filename = year + "年" + month + "月" + date + "日" + userName + ".csv";
 
@@ -163,6 +166,11 @@ public class CsvFileWrite extends UtilLogic {
 			PrintWriter pw = response.getWriter();
 
 			// 内容を指定する
+			pw.print(year + "/" + month + "/" + date );
+			pw.print(",");
+			pw.print(userName);
+			pw.println();
+
 			pw.print("勤務状況");
 			pw.print(",");
 			pw.print("勤務開始時間");
@@ -191,10 +199,8 @@ public class CsvFileWrite extends UtilLogic {
 				pw.print(workSituation.getOvertime());
 				pw.println();
 			}
-
 			// ファイルに書き出す
 			pw.close();
-
 		} catch (IOException ex) {
 			// 例外時処理
 			ex.printStackTrace();

@@ -15,13 +15,6 @@
 	</head>
 
 	<body>
-		<%
-			UserBeans userInfo = (UserBeans)request.getAttribute("userInfo");
-			String name = (String)request.getAttribute("name");
-			int year = (int)request.getAttribute("year");
-			int month = (int)request.getAttribute("month");
-			int date = (int)request.getAttribute("date");
-		%>
 		<div class="fh5co-loader"></div>
 		<div id="fh5co-page" style="width:95%">
 			<ul class="pull-left left-menu">

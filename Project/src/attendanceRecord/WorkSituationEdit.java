@@ -72,7 +72,7 @@ public class WorkSituationEdit extends HttpServlet {
 
 			// 勤務状況のリストがない場合はエラーメッセージとともにDailyWorkCheckへフォワード
 			if(workSituationList.size() == 0) {
-				request.setAttribute("errMsg", "編集するデータがありません。");
+				request.setAttribute("errMsg", "編集するデータがありません");
 
 				// workSituationEdit.jspへフォワード
 				RequestDispatcher dispatcher = request.getRequestDispatcher("DailyWorkCheck");

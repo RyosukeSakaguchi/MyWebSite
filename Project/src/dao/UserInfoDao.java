@@ -11,6 +11,7 @@ import java.util.List;
 
 import beans.SearchConditionBeans;
 import beans.UserBeans;
+import common.UtilLogic;
 
 public class UserInfoDao extends DaoUtil {
 
@@ -70,9 +71,9 @@ public class UserInfoDao extends DaoUtil {
 	 *            ユーザー名
 	 * @param birthDate
 	 *            誕生日
-	 * @return パスワード以外に未記入がない、かつ、パスワードとパスワード(確認)が一致している、かつ、ログインIDが被っていないときtrueを返す(それ以外はfalse)
+	 * @return パスワード以外に未記入がない、かつ、パスワードとパスワード(確認)が一致している、かつ、ログインIDが被っていないときokを返す(それ以外はエラーメッセージを返す)
 	 */
-	public static boolean userCheck(String loginId, String password, String passwordConf, String name,
+	public static String userCheck(String loginId, String password, String passwordConf, String name,
 			String birthDate) {
 		Connection conn = null;
 		if (loginId.length() != 0 && password.length() != 0 && name.length() != 0 && birthDate.length() != 0) {
@@ -91,10 +92,10 @@ public class UserInfoDao extends DaoUtil {
 					// 結果表に格納されたレコード数で繰り返し
 					while (rs.next()) {
 						if (loginId.equals(rs.getString("login_id"))) {
-							return false;
+							return "そのログインIDは使用できません";
 						}
 					}
-					return true;
+					return "ok";
 				} catch (SQLException e) {
 					e.printStackTrace();
 				} finally {
@@ -106,12 +107,11 @@ public class UserInfoDao extends DaoUtil {
 							e.printStackTrace();
 						}
 					}
-
 				}
 			}
+			return "パスワードが異なります";
 		}
-
-		return false;
+		return "未入力の箇所があります";
 	}
 
 	/**
@@ -549,7 +549,7 @@ public class UserInfoDao extends DaoUtil {
 			}
 		}
 
-		return userList;
+		return UtilLogic.userListSort(userList);
 
 	}
 

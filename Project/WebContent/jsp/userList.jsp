@@ -64,29 +64,24 @@
 											<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">役職</label>
 											<div class="col-sm-3">
 												<select class="form-control" name="position" style="background: white; height: 35px; width: 200px;">
-													<%
-														String position = (String)request.getAttribute("position");
-														String workSituation = (String)request.getAttribute("workSituation");
-
-													%>
 													<c:choose>
 														<c:when test="${position == null}">
 															<option value="" ></option>
-															<c:forEach var="obj" items="${positonList}">
-																<option value="${obj.position}" >${obj.position}</option>
+															<c:forEach var="obj" items="${positionList}">
+																<option value="${obj.getPosition()}" >${obj.getPosition()}</option>
 															</c:forEach>
 														</c:when>
 														<c:otherwise>
 															<option value="" ></option>
-															<c:forEach var="obj" items="positonList">
-															<c:choose>
-															<c:when test="${obj.getPosition().equals(position)}">
-															<option value="${obj.getPosition()}" selected >${obj.getPosition()}</option>
-															</c:when>
-															<c:otherwise>
-															<option value="${obj.getPosition()}" >${obj.getPosition()}</option>
-															</c:otherwise>
-															</c:choose>
+															<c:forEach var="obj" items="${positionList}">
+																<c:choose>
+																	<c:when test="${obj.getPosition() == position}">
+																		<option value="${obj.getPosition()}" selected >${obj.getPosition()}</option>
+																	</c:when>
+																	<c:otherwise>
+																		<option value="${obj.getPosition()}" >${obj.getPosition()}</option>
+																	</c:otherwise>
+																</c:choose>
 															</c:forEach>
 														</c:otherwise>
 													</c:choose>
@@ -107,17 +102,39 @@
 											<label for="inputName" class="col-sm-2 control-label" style="width: 200px;">勤務状況</label>
 											<div class="col-sm-3">
 												<select class="form-control" name="workSituation" style="background: white; height: 35px; width: 200px;">
-												<c:choose>
-												</c:choose>
-												<%if(workSituation == null){ %>
-													<option value=""  selected></option>
-													<option value="勤務中">勤務中</option>
-													<option value="帰宅" >帰宅</option>
-												<%}else{%>
-													<option value="" <% if(workSituation.equals("")){%> selected<% } %> ></option>
-													<option value="勤務中"<% if(workSituation.equals("勤務中")){%> selected<% } %> >勤務中</option>
-													<option value="帰宅" <% if(workSituation.equals("帰宅")){%> selected<% } %> >帰宅</option>
-												<%} %>
+													<c:choose>
+														<c:when test="${workSituation == null}">
+															<option value=""  selected></option>
+															<option value="勤務中">勤務中</option>
+															<option value="帰宅" >帰宅</option>
+														</c:when>
+														<c:otherwise>
+															<c:choose>
+																<c:when test="${workSituation == ''}">
+																	<option value=""  selected></option>
+																</c:when>
+																<c:otherwise>
+																	<option value=""  ></option>
+																</c:otherwise>
+															</c:choose>
+															<c:choose>
+																<c:when test="${workSituation == '勤務中'}">
+																	<option value="勤務中"  selected>勤務中</option>
+																</c:when>
+																<c:otherwise>
+																	<option value="勤務中">勤務中</option>
+																</c:otherwise>
+															</c:choose>
+															<c:choose>
+																<c:when test="${workSituation == '帰宅'}">
+																	<option value="帰宅"  selected>帰宅</option>
+																</c:when>
+																<c:otherwise>
+																	<option value="帰宅"  >帰宅</option>
+																</c:otherwise>
+															</c:choose>
+														</c:otherwise>
+													</c:choose>
 												</select>
 											</div>
 										</div>
@@ -140,29 +157,35 @@
 					<font size="5" color="red">${noCheckMsg}</font><br><br>
 
 						<div class="wrapper" style="justify-content:center;">
-							<%
-
-								List<UserBeans> u = (List<UserBeans>) request.getAttribute("userList");
-								int pageNumber = (int)request.getAttribute("pageNumber");
-								int totalPageNumber = (int)request.getAttribute("totalPageNumber");
-							%>
 							<c:choose>
 								<c:when test="${pageNumber != 1}">
 									<div >
 										<form action="UserList" method="get">
 											<button  role="button" type="submit" style ="color : #85919d; width : 10px ; background-color : rgb(249, 249, 249); border-style: none; "><span class="icon-angle-double-left" aria-hidden="true"></span></button>
 											<input type="hidden" name="pageNumber" value=1>
+											<input type="hidden"  name="login_id" value="${login_id}">
+											<input type="hidden" name="name" value="${name}">
+											<input type="hidden" name="position" value="${position}">
+											<input type="hidden" name="birth_date_from" value="${birth_date_from}">
+											<input type="hidden" name="birth_date_to" value="${birth_date_to}">
+											<input type="hidden" name="workSituation" value="${workSituation}">
 											<c:forEach var="obj" items="${userList}">
-												<input type="hidden" name="userIdList[]" value="${user.getId()}" >
+												<input type="hidden" name="userIdList[]" value="${obj.getId()}" >
 											</c:forEach>
 										</form>
-									</div>
+									</div>　
 									<div >
 										<form action="UserList" method="get">
 											<button  role="button" type="submit" style ="color : #85919d; width : 10px; background-color : rgb(249, 249, 249); border-style: none;"><span class="icon-angle-left" aria-hidden="true"></span></button>
 											<input type="hidden" name="pageNumber" value="${pageNumber-1}">
+											<input type="hidden"  name="login_id" value="${login_id}">
+											<input type="hidden" name="name" value="${name}">
+											<input type="hidden" name="position" value="${position}">
+											<input type="hidden" name="birth_date_from" value="${birth_date_from}">
+											<input type="hidden" name="birth_date_to" value="${birth_date_to}">
+											<input type="hidden" name="workSituation" value="${workSituation}">
 											<c:forEach var="obj" items="${userList}">
-												<input type="hidden" name="userIdList[]" value="${user.getId()}" >
+												<input type="hidden" name="userIdList[]" value="${obj.getId()}" >
 											</c:forEach>
 										</form>
 									</div>
@@ -177,41 +200,43 @@
 							</div>
 							<c:choose>
 								<c:when test="${pageNumber != totalPageNumber}">
-									<div >
+									<div>
 										<form action="UserList" method="get">
 											<button  role="button" type="submit" style ="color : #85919d; width : 10px ;background-color : rgb(249, 249, 249); border-style: none;"><span class="icon-angle-right" aria-hidden="true"></span></button>
-											<input type="hidden" name="pageNumber" value="<%=pageNumber+1%>">
-										<%
-									for(UserBeans user : u){
-									%>
-									<input type="hidden" name="userIdList[]" value="<%=user.getId()%>" >
-									<%
-										}
-									%>
+											<input type="hidden" name="pageNumber" value="${pageNumber+1}">
+											<input type="hidden"  name="login_id" value="${login_id}">
+											<input type="hidden" name="name" value="${name}">
+											<input type="hidden" name="position" value="${position}">
+											<input type="hidden" name="birth_date_from" value="${birth_date_from}">
+											<input type="hidden" name="birth_date_to" value="${birth_date_to}">
+											<input type="hidden" name="workSituation" value="${workSituation}">
+											<c:forEach var="obj" items="${userList}">
+												<input type="hidden" name="userIdList[]" value="${obj.getId()}" >
+											</c:forEach>
 										</form>
 									</div>　
 									<div >
-									<form action="UserList" method="get">
-									<button  role="button" type="submit" style ="color : #85919d; width : 10px; background-color : rgb(249, 249, 249); border-style: none;"><span class="icon-angle-double-right" aria-hidden="true"></span></button>
-									<input type="hidden" name="pageNumber" value="<%=totalPageNumber%>">
-								<%
-								for(UserBeans user : u){
-								%>
-								<input type="hidden" name="userIdList[]" value="<%=user.getId()%>" >
-								<%
-									}
-								%>
-									</form>
+										<form action="UserList" method="get">
+											<button  role="button" type="submit" style ="color : #85919d; width : 10px; background-color : rgb(249, 249, 249); border-style: none;"><span class="icon-angle-double-right" aria-hidden="true"></span></button>
+											<input type="hidden" name="pageNumber" value="${totalPageNumber}">
+											<input type="hidden"  name="login_id" value="${login_id}">
+											<input type="hidden" name="name" value="${name}">
+											<input type="hidden" name="position" value="${position}">
+											<input type="hidden" name="birth_date_from" value="${birth_date_from}">
+											<input type="hidden" name="birth_date_to" value="${birth_date_to}">
+											<input type="hidden" name="workSituation" value="${workSituation}">
+											<c:forEach var="obj" items="${userList}">
+												<input type="hidden" name="userIdList[]" value="${obj.getId()}" >
+											</c:forEach>
+										</form>
 									</div>
 								</c:when>
-							<c:otherwise>
-							<div></div>
-							<div></div>
-							</c:otherwise>
+								<c:otherwise>
+									<div></div>
+									<div></div>
+								</c:otherwise>
 							</c:choose>
-
-
-							</div>
+						</div>
 					<form name="form1" action="UserDelete" method="get">
 							<input type="button" class="btn btn-primary" value="全て選択" onClick="BoxChecked(true);">
 							<input type="button" class="btn btn-warning" value="全て未選択" onClick="BoxChecked(false);" >
@@ -236,56 +261,64 @@
 										</tr>
 									</thead>
 									<tbody>
-										<%
-											UserBeans loginUser = (UserBeans)session.getAttribute("loginUser");
-											int userNumberPerPage = (int)request.getAttribute("userNumberPerPage");
-											Date now = new Date();
-											SimpleDateFormat y = new SimpleDateFormat("yyyy");
-											SimpleDateFormat m = new SimpleDateFormat("MM");
-											int year = Integer.parseInt(y.format(now));
-											int month = Integer.parseInt(m.format(now));
-
-											for (int i = userNumberPerPage * (pageNumber - 1); i < userNumberPerPage * pageNumber ; i++) {
-												if(i == u.size()){
-													break;
-												}
-
-												boolean result = WorkSituationDao.isWorking(u.get(i).getLoginId());
-												String titalOvertime = UtilLogic.totalOvertime(WorkSituationDao.findAll(u.get(i).getLoginId(), year, month));
-												int titalOvertimeInt = UtilLogic.stringTimeToInt(titalOvertime);
-										%>
-										<tr>
-											<td></td>
-											<td><input type="checkbox" name="delListId[]" value="<%=u.get(i).getId()%>" onClick="DisChecked();"></td>
-											<td><%=u.get(i).getLoginId()%></td>
-											<td><%=u.get(i).getName()%></td>
-											<td><%=u.get(i).getFormatBirthDate()%></td>
-											<%
-												if(!result){
-											%>
-												<td>帰宅
-											<%
-												}else{
-											%>
-											<td>勤務中
-											<%
-												}
-												if(titalOvertimeInt >= 500000) {
-											%>
-											<font size="3" color="red">　残業時間超過</font>
-											<%
-												}
-											%>
-											</td>
-											<td>
-												<a class="btn btn-primary" href="UserDetail?id=<%=u.get(i).getId()%>">詳細</a>
-												<a class="btn btn-success" href="UserUpdate?id=<%=u.get(i).getId()%>">更新</a>
-												<a class="btn btn-danger" href="UserDelete?id=<%=u.get(i).getId()%>">削除</a>
-											</td>
-										</tr>
-										<%
-											}
-										%>
+										<c:choose>
+											<c:when test="${userNumberPerPage * pageNumber <= userList.size()}">
+												<c:forEach var="i" begin="${userNumberPerPage * (pageNumber - 1)}" end="${userNumberPerPage * pageNumber-1}">
+													<tr>
+														<td></td>
+														<td><input type="checkbox" name="delListId[]" value="${userList.get(i).getId()}" onClick="DisChecked();"></td>
+														<td>${userList.get(i).getLoginId()}</td>
+														<td>${userList.get(i).getName()}</td>
+														<td>${userList.get(i).getFormatBirthDate()}</td>
+														<c:choose>
+															<c:when test="${!WorkSituationDao.isWorking(userList.get(i).getLoginId())}">
+																<td>帰宅
+															</c:when>
+															<c:otherwise>
+																<td>勤務中
+															</c:otherwise>
+														</c:choose>
+														<c:if test="${UtilLogic.stringTimeToInt(UtilLogic.totalOvertime(WorkSituationDao.findAll(userList.get(i).getLoginId(), year, month))) >= 500000}">
+															<font size="3" color="red">　残業時間超過</font>
+														</c:if>
+														</td>
+														<td>
+															<a class="btn btn-primary" href="UserDetail?id=${userList.get(i).getId()}">詳細</a>
+															<a class="btn btn-success" href="UserUpdate?id=${userList.get(i).getId()}">更新</a>
+															<a class="btn btn-danger" href="UserDelete?id=${userList.get(i).getId()}">削除</a>
+														</td>
+													</tr>
+												</c:forEach>
+											</c:when>
+											<c:otherwise>
+												<c:forEach  var="i" begin="${userNumberPerPage * (pageNumber - 1)}" end="${userList.size() - 1}" >
+													<tr>
+														<td></td>
+														<td><input type="checkbox" name="delListId[]" value="${userList.get(i).getId()}" onClick="DisChecked();"></td>
+														<td>${userList.get(i).getLoginId()}</td>
+														<td>${userList.get(i).getName()}</td>
+														<td>${userList.get(i).getFormatBirthDate()}</td>
+														<c:choose>
+															<c:when test="${!WorkSituationDao.isWorking(userList.get(i).getLoginId())}">
+																<td>帰宅
+															</c:when>
+															<c:otherwise>
+																<td>勤務中
+															</c:otherwise>
+														</c:choose>
+														<c:if test="${UtilLogic.stringTimeToInt(UtilLogic.totalOvertime(WorkSituationDao.findAll(userList.get(i).getLoginId(), year, month))) >= 500000}">
+															<font size="3" color="red">　残業時間超過</font>
+														</c:if>
+														</td>
+														<td>
+															<a class="btn btn-primary" href="UserDetail?id=${userList.get(i).getId()}">詳細</a>
+															<a class="btn btn-success" href="UserUpdate?id=${userList.get(i).getId()}">更新</a>
+															<a class="btn btn-danger" href="UserDelete?id=${userList.get(i).getId()}">削除</a>
+														</td>
+													</tr>
+												</c:forEach>
+											</c:otherwise>
+										</c:choose>
 									</tbody>
 								</table>
 							</div>

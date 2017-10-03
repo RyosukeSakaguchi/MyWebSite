@@ -1,7 +1,9 @@
 package attendanceRecord;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -70,6 +72,12 @@ public class UserList extends HttpServlet {
 				request.setAttribute("totalPageNumber", totalPageNumber);
 				request.setAttribute("pageNumber", pageNumber);
 				request.setAttribute("userList", userList);
+				request.setAttribute("login_id", request.getParameter("login_id"));
+				request.setAttribute("name", request.getParameter("name"));
+				request.setAttribute("position", request.getParameter("position"));
+				request.setAttribute("birth_date_from", request.getParameter("birth_date_from"));
+				request.setAttribute("birth_date_to", request.getParameter("birth_date_to"));
+				request.setAttribute("workSituation", request.getParameter("workSituation"));
 			}else {
 				// userテーブルにある全てのユーザーを取り出し、勤務中のユーザー」を先に並べ、
 				//「帰宅しているユーザー」を後に並べかえ、 さらに管理者がリストに入っている場合は取り除く
@@ -83,11 +91,19 @@ public class UserList extends HttpServlet {
 				request.setAttribute("totalPageNumber", totalPageNumber);
 				request.setAttribute("pageNumber", pageNumber);
 				request.setAttribute("userList", userList);
+			}
 
-		}
-			List<PositionBeans> positonList = DaoUtil.findAllPosition();
+			Date now = new Date();
+			SimpleDateFormat y = new SimpleDateFormat("yyyy");
+			SimpleDateFormat m = new SimpleDateFormat("MM");
+			int year = Integer.parseInt(y.format(now));
+			int month = Integer.parseInt(m.format(now));
+
+			List<PositionBeans> positionList = DaoUtil.findAllPosition();
 			//リクエストパラメーターを保存
-			request.setAttribute("positonList" ,positonList);
+			request.setAttribute("positionList" ,positionList);
+			request.setAttribute("year" ,year);
+			request.setAttribute("month" ,month);
 
 			// userList.jspへフォワード
 			RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/userList.jsp");
@@ -105,7 +121,6 @@ public class UserList extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 
 		try {
-
 			// ユーザーを検索し、userListに代入
 			UserInfoDao userInfoDao = new UserInfoDao();
 			List<UserBeans> userList = userInfoDao.searchUser(
@@ -132,9 +147,18 @@ public class UserList extends HttpServlet {
 			request.setAttribute("birth_date_to", request.getParameter("birth_date_to"));
 			request.setAttribute("workSituation", request.getParameter("workSituation"));
 
-			List<PositionBeans> positonList = DaoUtil.findAllPosition();
+
+			Date now = new Date();
+			SimpleDateFormat y = new SimpleDateFormat("yyyy");
+			SimpleDateFormat m = new SimpleDateFormat("MM");
+			int year = Integer.parseInt(y.format(now));
+			int month = Integer.parseInt(m.format(now));
+
+			List<PositionBeans> positionList = DaoUtil.findAllPosition();
 			//リクエストパラメーターを保存
-			request.setAttribute("positonList" ,positonList);
+			request.setAttribute("positionList" ,positionList);
+			request.setAttribute("year" ,year);
+			request.setAttribute("month" ,month);
 
 			// userList.jspへフォワード
 			request.getRequestDispatcher("jsp/userList.jsp").forward(request, response);

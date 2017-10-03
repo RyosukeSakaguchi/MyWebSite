@@ -81,8 +81,8 @@
 													<td></td>
 													<td></td>
 													<td></td>
-													<td style="text-align: center;">総勤務時間 "${titalWorkTime}"</td>
-													<td style="text-align: center;">総残業時間 "${titalOvertime}"</td>
+													<td style="text-align: center;">総勤務時間 ${titalWorkTime}</td>
+													<td style="text-align: center;">総残業時間 ${titalOvertime}</td>
 												</tr>
 											</tbody>
 										</table>

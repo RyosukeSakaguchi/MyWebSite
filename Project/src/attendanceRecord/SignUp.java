@@ -97,10 +97,10 @@ public class SignUp extends HttpServlet {
 		//リクエストパラメーターを保存
 		request.setAttribute("positonList" ,positonList);
 
-		// 入力項目に未入力があるかないかで分岐
-		if (!UserInfoDao.userCheck(loginId, password, passwordConf, name, birthDate)) {
+		// 新規登録可能かどうかで分岐
+		if (!UserInfoDao.userCheck(loginId, password, passwordConf, name, birthDate).equals("ok")) {
 			//リクエストパラメーターを保存
-			request.setAttribute("errMsg", "入力された内容は正しくありません。");
+			request.setAttribute("errMsg", UserInfoDao.userCheck(loginId, password, passwordConf, name, birthDate));
 			request.setAttribute("loginId", loginId);
 			request.setAttribute("name", name);
 			request.setAttribute("birthDate", birthDate);
