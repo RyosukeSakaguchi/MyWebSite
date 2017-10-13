@@ -238,11 +238,16 @@
 							</c:choose>
 						</div>
 					<form name="form1" action="UserDelete" method="get">
-							<input type="button" class="btn btn-primary" value="全て選択" onClick="BoxChecked(true);">
-							<input type="button" class="btn btn-warning" value="全て未選択" onClick="BoxChecked(false);" >
-							　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　
-							<button class="btn btn-danger" type="submit">選択したユーザーを削除</button>
-							<a class="btn btn-danger" href="UserDelete?id=all">全ユーザーを削除</a>
+						<div class="wrapper">
+							<div>
+								<input type="button" class="btn btn-primary" value="全て選択" onClick="BoxChecked(true);">
+								<input type="button" class="btn btn-warning" value="全て未選択" onClick="BoxChecked(false);" >
+							</div>
+							<div>
+								<button class="btn btn-danger" type="submit">選択したユーザーを削除</button>
+								<a class="btn btn-danger" href="UserDelete?id=all">全ユーザーを削除</a>
+							</div>
+						 </div>
 							<br><br>
 
 						<div class="row">
